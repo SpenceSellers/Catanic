@@ -53,9 +53,9 @@ class App(Frame):
 
         self.canvas.create_polygon(*xys, outline='gray', fill=color, width=4)
 
-    def hex_pixel_coords(self, coords):
-        x = self.tile_radius * (math.sqrt(3) * coords[0] + math.sqrt(3)/2 * coords[1]) + self.tile_offset[0]
-        y = self.tile_radius * (3.0 / 2 * coords[1]) + self.tile_offset[1]
+    def hex_pixel_coords(self, coords: hexagons.HexCoord):
+        x = self.tile_radius * (math.sqrt(3) * coords.q + math.sqrt(3)/2 * coords.r) + self.tile_offset[0]
+        y = self.tile_radius * (3.0 / 2 * coords.r) + self.tile_offset[1]
         return x, y
 
     def vertice_pixel_coords(self, vertice: hexagons.VerticeCoord):

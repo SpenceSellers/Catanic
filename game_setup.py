@@ -20,7 +20,7 @@ def random_vertice(coords) -> hexagons.VerticeCoord:
 def new_board():
     board = Board()
 
-    tile_places = [(x, y) for x in range(-5, 6) for y in range(-5, 6) if hexagons.hex_distance((0,0), (x, y)) < 5]
+    tile_places = [hexagons.HexCoord(x, y) for x in range(-5, 6) for y in range(-5, 6) if hexagons.hex_distance((0,0), (x, y)) < 5]
     for place in tile_places:
         board.tiles[place] = random_tile(place)
 

@@ -2,7 +2,10 @@ import math
 from dataclasses import dataclass
 from typing import Tuple, List
 
-HexCoord = Tuple[int, int]
+@dataclass(eq=True, frozen=True)
+class HexCoord:
+    q: int
+    r: int
 
 
 @dataclass(eq=True, frozen=True)
