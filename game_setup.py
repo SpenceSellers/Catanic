@@ -12,9 +12,9 @@ def random_tile(coords) -> Tile:
     return Tile(coords, random_tile_type(), random.randint(1, 12))
 
 
-def random_vertice(coords) -> hexagons.VerticeCoord:
+def random_vertice(coords) -> hexagons.VertexCoord:
     tile = random.choice(coords)
-    return hexagons.VerticeCoord(tile, random.randint(0, 6)).normalize()
+    return hexagons.VertexCoord(tile, random.randint(0, 6)).normalize()
 
 
 def new_board():
@@ -25,6 +25,7 @@ def new_board():
         board.tiles[place] = random_tile(place)
 
     return board
+
 
 def new_board_started():
     board = new_board()

@@ -58,7 +58,7 @@ class App(Frame):
         y = self.tile_radius * (3.0 / 2 * coords.r) + self.tile_offset[1]
         return x, y
 
-    def vertice_pixel_coords(self, vertice: hexagons.VerticeCoord):
+    def vertice_pixel_coords(self, vertice: hexagons.VertexCoord):
         return vertice.pos(self.hex_pixel_coords(vertice.tile), self.tile_radius)
 
     def draw_hex(self, pos, color=None):

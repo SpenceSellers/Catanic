@@ -5,6 +5,17 @@ from typing import Tuple, List, Iterable
 
 @dataclass(eq=True, frozen=True)
 class HexCoord:
+    """Represents a the coordinates for a Hexagon in an infinitely tiling hexagon-space.
+
+    "q" and "r" are close equivalents to "x" and "y", but unlike on the familiar cartesian plane,
+    they are not perfectly orthogonal. Interpreted graphically, The "q" and "r" axes are
+    60 degrees apart, instead of 90.
+
+    This incredible guide from Red Blob Games was an invaluable reference for this.
+    https://www.redblobgames.com/grids/hexagons/
+
+    Negative q and r values are permitted.
+    """
     q: int
     r: int
 
@@ -12,20 +23,25 @@ class HexCoord:
         pass
 
     def adjacent(self) -> Iterable['HexCoord']:
+        """Provides the six hexagons that touch this hexagon"""
         for i in range(6):
             yield self.through_side(i)
 
-    def vertices(self) -> Iterable['VerticeCoord']:
+    def vertices(self) -> Iterable['VertexCoord']:
+        """Provides the six corners of this hexagon"""
         for i in range(6):
-            yield VerticeCoord(self, i).normalize()
+            yield VertexCoord(self, i).normalize()
 
     def add(self, other: 'HexCoord'):
+        """Shifts these coordinates by the coordinates of another hexagon"""
         return HexCoord(self.q + other.q, self.r + other.r)
 
     def through_side(self, side: int) -> 'HexCoord':
+        """Provides the hexagon on the "other side" of a given edge"""
         return self.add(HEX_SIDE_OFFSETS[side])
 
     def edge(self, side: int) -> 'EdgeCoord':
+        """Provides the coordinates of a particular edge on this hexagon (shared with one other hexagon)"""
         return EdgeCoord(self, side).normalize()
 
 
@@ -40,32 +56,42 @@ HEX_SIDE_OFFSETS = {
 
 
 @dataclass(eq=True, frozen=True)
-class VerticeCoord:
+class VertexCoord:
+    """Represents the coordinates of a single 'corner' of a hexagon in hexagon-space.
+
+    Every vertice """
     tile: HexCoord
-    vertice: int
+    vertex: int
 
     def pos(self, center: Tuple[float, float], radius: float) -> Tuple[float, float]:
-        return pixel_corner(center, radius, self.vertice)
+        return pixel_corner(center, radius, self.vertex)
 
-    def normalize(self) -> 'VerticeCoord':
-        # When addressing vertices, a hex only "owns" corner 0 and 1, making each vertice unique.
-        vertice = self.vertice % 6
-        if vertice == 2:
-            return VerticeCoord(self.tile.through_side(2), 0)
-        elif vertice == 3:
-            return VerticeCoord(self.tile.through_side(3), 1)
-        elif vertice == 4:
-            return VerticeCoord(self.tile.through_side(3), 0)
-        elif vertice == 5:
-            return VerticeCoord(self.tile.through_side(4), 1)
+    def normalize(self) -> 'VertexCoord':
+        """Converts a possibly non-normalized VerticeCoord to a singular, comparable, normalized form.
+
+        When addressing vertices, a hex only "owns" corner 0 and 1. This is because a hexagon is surrounded
+        by six other hexagons, each intersecting on two corners. By giving each hexagon "ownership" of two corners,
+        we can deterministically decide who owns each corner, and therefore, what the unique name of each corner is.
+        """
+
+        vertex = self.vertex % 6
+        if vertex == 2:
+            return VertexCoord(self.tile.through_side(2), 0)
+        elif vertex == 3:
+            return VertexCoord(self.tile.through_side(3), 1)
+        elif vertex == 4:
+            return VertexCoord(self.tile.through_side(3), 0)
+        elif vertex == 5:
+            return VertexCoord(self.tile.through_side(4), 1)
         else:
-            return VerticeCoord(self.tile, vertice)
+            return VertexCoord(self.tile, vertex)
 
     def edges(self) -> List['EdgeCoord']:
+        """Provides the three edges that lead away from this corner"""
         us = self.normalize()
-        if us.vertice == 0:
+        if us.vertex == 0:
             return [self.tile.edge(0), self.tile.edge(5), self.tile.through_side(0).edge(4)]
-        elif us.vertice == 1:
+        elif us.vertex == 1:
             return [self.tile.edge(0), self.tile.edge(1), self.tile.through_side(0).edge(2)]
 
 
@@ -74,10 +100,10 @@ class EdgeCoord:
     tile: HexCoord
     edge: int
 
-    def vertices(self) -> List[VerticeCoord]:
+    def vertices(self) -> List[VertexCoord]:
         return [
-            VerticeCoord(self.tile, self.edge).normalize(),
-            VerticeCoord(self.tile, self.edge + 1).normalize()
+            VertexCoord(self.tile, self.edge).normalize(),
+            VertexCoord(self.tile, self.edge + 1).normalize()
         ]
 
     def normalize(self) -> 'EdgeCoord':

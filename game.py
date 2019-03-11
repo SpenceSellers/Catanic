@@ -30,7 +30,7 @@ class Resource(Enum):
 @dataclass
 class Settlement:
     owner: int
-    coords: hex.VerticeCoord
+    coords: hex.VertexCoord
     is_city: bool = False
 
 
@@ -42,7 +42,7 @@ class Road:
 
 class Board:
     tiles: Dict[hex.HexCoord, Tile]
-    settlements: Dict[hex.VerticeCoord, Settlement]
+    settlements: Dict[hex.VertexCoord, Settlement]
     roads: Dict[hex.EdgeCoord, Road]
 
     def __init__(self):
