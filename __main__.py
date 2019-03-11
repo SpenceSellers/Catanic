@@ -20,7 +20,7 @@ def main():
 
         q.put(board)
 
-        time.sleep(30)
+        time.sleep(10)
     # gui.start(board)
 
 

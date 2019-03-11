@@ -87,7 +87,7 @@ class App(Frame):
         self.canvas.create_text(center_pos[0], center_pos[1], text=str(tile.number))
 
         if self.debug:
-            self.canvas.create_text(center_pos[0], center_pos[1] + 25, text=str(tile.coords))
+            self.canvas.create_text(center_pos[0], center_pos[1] + 25, text=f'{tile.coords.q}, {tile.coords.r}')
 
     def draw_board(self, board: game.Board):
         for tile in board.tiles.values():

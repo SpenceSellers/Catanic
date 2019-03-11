@@ -1,13 +1,26 @@
 import math
 from dataclasses import dataclass
-from typing import Tuple, List
+from typing import Tuple, List, Iterable
+
 
 @dataclass(eq=True, frozen=True)
 class HexCoord:
     q: int
     r: int
 
-    def 
+    def shared_edge(self, other: 'HexCoord'):
+        pass
+
+    def adjacent(self) -> Iterable['HexCoord']:
+        for qdiff in range(-1, 2):
+            for rdiff in range(-1, 2):
+                if qdiff == rdiff:
+                    continue
+                yield HexCoord(self.q + qdiff, self.r + rdiff)
+
+    def vertices(self) -> Iterable['VerticeCoord']:
+        for i in range(6):
+            yield VerticeCoord(self, i).normalize()
 
 
 @dataclass(eq=True, frozen=True)
@@ -29,7 +42,6 @@ class VerticeCoord:
         pass
 
 
-
 @dataclass(eq=True, frozen=True)
 class EdgeCoord:
     tile: HexCoord
@@ -37,8 +49,8 @@ class EdgeCoord:
 
     def vertices(self) -> List[VerticeCoord]:
         return [
-            VerticeCoord(self.tile, self.edge),
-            VerticeCoord(self.tile, self.edge + 1)
+            VerticeCoord(self.tile, self.edge).normalize(),
+            VerticeCoord(self.tile, self.edge + 1).normalize()
         ]
 
 
