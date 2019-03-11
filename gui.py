@@ -19,8 +19,8 @@ PLAYER_COLORS = {
     0: 'red',
     1: 'blue',
     2: 'green',
-    3: 'brown',
-    4: 'orange',
+    3: 'orange',
+    4: 'brown',
     5: 'white'
 }
 
