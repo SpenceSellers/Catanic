@@ -1,5 +1,8 @@
 import math
+import queue
 from tkinter import *
+import threading
+
 import game
 
 import hexagons
@@ -32,12 +35,15 @@ class App(Frame):
         self.canvas.configure(background='white')
         self.canvas.pack()
 
-        self.btn = Button(self, text='U sux')
+        self.btn = Button(self, text='More Info', command=self.toggle_debug)
         self.btn.pack(side='left')
 
         self.tile_offset = (400, 400)
         self.tile_radius = 50
-        self.show_coordinates = False
+        self.debug = False
+
+    def toggle_debug(self):
+        self.debug = not self.debug
 
     def draw_hex_raw(self, center, radius, color='red'):
         xys = []
@@ -80,7 +86,7 @@ class App(Frame):
 
         self.canvas.create_text(center_pos[0], center_pos[1], text=str(tile.number))
 
-        if self.show_coordinates:
+        if self.debug:
             self.canvas.create_text(center_pos[0], center_pos[1] + 25, text=str(tile.coords))
 
     def draw_board(self, board: game.Board):
@@ -119,10 +125,24 @@ class App(Frame):
             width=5
         )
 
+    def clear(self):
+        self.canvas.delete(ALL)
 
-def start(board: game.Board):
+def qthread(q: queue.Queue, app: Frame):
+    print('Starting event thread')
+    while True:
+        print('Boarding!')
+        board = q.get(True)
+        app.clear()
+
+        app.draw_board(board)
+
+        # app.update()
+
+def start(q: queue.Queue):
     root = Tk()
     # root.geometry('1000x500')
     app = App(master=root)
-    app.draw_board(board)
+    queue_thread = threading.Thread(target=lambda: qthread(q, app))
+    queue_thread.start()
     app.mainloop()

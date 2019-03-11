@@ -17,6 +17,13 @@ class VerticeCoord:
         # TODO
         return VerticeCoord(self.tile, self.vertice % 6)
 
+    def edges(self) -> List['EdgeCoord']:
+        pass
+
+    def touching_tiles(self) -> List[HexCoord]:
+        pass
+
+
 
 @dataclass(eq=True, frozen=True)
 class EdgeCoord:

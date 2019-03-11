@@ -50,6 +50,12 @@ class Board:
         self.settlements = {}
         self.roads = {}
 
+    def add_settlement(self, settlement: Settlement):
+        self.settlements[settlement.coords] = settlement
+
+    def add_road(self, road: Road):
+        self.roads[road.coords] = road
+
     def __str__(self):
         return f'{self.tiles}'
 

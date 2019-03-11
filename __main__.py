@@ -1,4 +1,6 @@
+import queue
 import threading
+import time
 
 import game
 import game_setup
@@ -7,16 +9,18 @@ import gui
 import hexagons
 
 def main():
-    board = game_setup.new_board()
 
-    vtc = hexagons.VerticeCoord((0, 0), 0)
-    board.settlements[vtc] = game.Settlement(1, vtc)
+    q = queue.Queue()
 
-    ec = hexagons.EdgeCoord((0,0), 0)
-    board.roads[ec] = game.Road(1, ec)
+    thread = threading.Thread(target=lambda: gui.start(q))
+    thread.start()
 
-    threading.Thread(lambda: gui.start(board))
+    while True:
+        board = game_setup.new_board_started()
 
+        q.put(board)
+
+        time.sleep(30)
     # gui.start(board)
 
 
