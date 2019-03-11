@@ -13,6 +13,15 @@ TILE_COLORS = {
     game.TileType.WOOD: '#273f0c'
 }
 
+PLAYER_COLORS = {
+    0: 'red',
+    1: 'blue',
+    2: 'green',
+    3: 'brown',
+    4: 'orange',
+    5: 'white'
+}
+
 class App(Frame):
     def __init__(self, master=None):
         super().__init__(master)
@@ -31,14 +40,8 @@ class App(Frame):
         self.show_coordinates = False
 
     def draw_hex_raw(self, center, radius, color='red'):
-        def corners():
-            for i in range(6):
-                angle_deg = 60 * i - 30
-                angle_rad = (math.pi / 180) * angle_deg
-                yield (center[0] + radius * math.cos(angle_rad), center[1] + radius * math.sin(angle_rad))
-
         xys = []
-        for corner in corners():
+        for corner in hexagons.pixel_corners(center, radius):
             xys.append(corner[0])
             xys.append(corner[1])
 
@@ -49,8 +52,10 @@ class App(Frame):
         y = self.tile_radius * (3.0 / 2 * coords[1]) + self.tile_offset[1]
         return x, y
 
-    def draw_hex(self, pos, color=None):
+    def vertice_pixel_coords(self, vertice: hexagons.VerticeCoord):
+        return vertice.pos(self.hex_pixel_coords(vertice.tile), self.tile_radius)
 
+    def draw_hex(self, pos, color=None):
         self.draw_hex_raw(pos, self.tile_radius, color=color)
 
     def draw_tile(self, tile: game.Tile):
@@ -81,6 +86,41 @@ class App(Frame):
     def draw_board(self, board: game.Board):
         for tile in board.tiles.values():
             self.draw_tile(tile)
+
+        for settlement in board.settlements.values():
+            self.draw_settlement(settlement)
+
+        for road in board.roads.values():
+            self.draw_road(road)
+
+    def draw_settlement(self, settlement: game.Settlement):
+        coords = self.vertice_pixel_coords(settlement.coords)
+
+        rectangle_size = 10
+        self.canvas.create_rectangle(
+            coords[0] - rectangle_size,
+            coords[1] - rectangle_size,
+            coords[0] + rectangle_size,
+            coords[1] + rectangle_size,
+            fill=PLAYER_COLORS[settlement.owner]
+        )
+
+    def draw_road(self, road: game.Road):
+        [v1, v2] = road.coords.vertices()
+        c1 = self.vertice_pixel_coords(v1)
+        c2 = self.vertice_pixel_coords(v2)
+
+        self.canvas.create_line(
+            c1[0],
+            c1[1],
+            c2[0],
+            c2[1],
+            fill=PLAYER_COLORS[road.owner],
+            width=5
+        )
+
+
+
 
 def start(board: game.Board):
     root = Tk()

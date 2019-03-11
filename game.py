@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Dict, Tuple
 
+import hexagons as hex
+
 
 class TileType(Enum):
     STONE = 'stone'
@@ -13,7 +15,7 @@ class TileType(Enum):
 
 @dataclass
 class Tile:
-    coords: Tuple[int, int]
+    coords: hex.HexCoord
     type: TileType
     number: int
 
@@ -25,11 +27,28 @@ class Resource(Enum):
     WOOD = auto()
 
 
+@dataclass
+class Settlement:
+    owner: int
+    coords: hex.VerticeCoord
+    is_city: bool = False
+
+
+@dataclass
+class Road:
+    owner: int
+    coords: hex.EdgeCoord
+
+
 class Board:
-    tiles: Dict[Tuple[int, int], Tile]
+    tiles: Dict[hex.HexCoord, Tile]
+    settlements: Dict[hex.VerticeCoord, Settlement]
+    roads: Dict[hex.EdgeCoord, Road]
 
     def __init__(self):
         self.tiles = {}
+        self.settlements = {}
+        self.roads = {}
 
     def __str__(self):
         return f'{self.tiles}'
