@@ -7,6 +7,8 @@ class HexCoord:
     q: int
     r: int
 
+    def 
+
 
 @dataclass(eq=True, frozen=True)
 class VerticeCoord:
