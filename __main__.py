@@ -1,3 +1,5 @@
+import threading
+
 import game
 import game_setup
 import pprint
@@ -13,7 +15,9 @@ def main():
     ec = hexagons.EdgeCoord((0,0), 0)
     board.roads[ec] = game.Road(1, ec)
 
-    gui.start(board)
+    threading.Thread(lambda: gui.start(board))
+
+    # gui.start(board)
 
 
 

@@ -1,7 +1,6 @@
 import math
 from tkinter import *
 import game
-import multiprocessing
 
 import hexagons
 
@@ -21,6 +20,7 @@ PLAYER_COLORS = {
     4: 'orange',
     5: 'white'
 }
+
 
 class App(Frame):
     def __init__(self, master=None):
@@ -118,8 +118,6 @@ class App(Frame):
             fill=PLAYER_COLORS[road.owner],
             width=5
         )
-
-
 
 
 def start(board: game.Board):
