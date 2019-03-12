@@ -2,7 +2,7 @@ import queue
 import threading
 import time
 
-import game
+import board
 import game_setup
 import pprint
 import gui

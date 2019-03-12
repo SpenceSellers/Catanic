@@ -1,4 +1,4 @@
-from game import *
+from board import *
 import random
 import hexagons
 

@@ -3,16 +3,16 @@ import queue
 from tkinter import *
 import threading
 
-import game
+import board
 
 import hexagons
 
 TILE_COLORS = {
-    game.TileType.DESERT: '#a5a27d',
-    game.TileType.MUD: '#9e6c1c',
-    game.TileType.STONE: '#7589a8',
-    game.TileType.WHEAT: '#8f9131',
-    game.TileType.WOOD: '#273f0c'
+    board.TileType.DESERT: '#a5a27d',
+    board.TileType.MUD: '#9e6c1c',
+    board.TileType.STONE: '#7589a8',
+    board.TileType.WHEAT: '#8f9131',
+    board.TileType.WOOD: '#273f0c'
 }
 
 PLAYER_COLORS = {
@@ -64,7 +64,7 @@ class App(Frame):
     def draw_hex(self, pos, color=None):
         self.draw_hex_raw(pos, self.tile_radius, color=color)
 
-    def draw_tile(self, tile: game.Tile):
+    def draw_tile(self, tile: board.Tile):
         color = TILE_COLORS[tile.type]
 
         center_pos = self.hex_pixel_coords(tile.coords)
@@ -89,7 +89,7 @@ class App(Frame):
         if self.debug:
             self.canvas.create_text(center_pos[0], center_pos[1] + 25, text=f'{tile.coords.q}, {tile.coords.r}')
 
-    def draw_board(self, board: game.Board):
+    def draw_board(self, board: board.Board):
         for tile in board.tiles.values():
             self.draw_tile(tile)
 
@@ -99,7 +99,7 @@ class App(Frame):
         for road in board.roads.values():
             self.draw_road(road)
 
-    def draw_settlement(self, settlement: game.Settlement):
+    def draw_settlement(self, settlement: board.Settlement):
         coords = self.vertice_pixel_coords(settlement.coords)
 
         rectangle_size = 10
@@ -111,7 +111,7 @@ class App(Frame):
             fill=PLAYER_COLORS[settlement.owner]
         )
 
-    def draw_road(self, road: game.Road):
+    def draw_road(self, road: board.Road):
         [v1, v2] = road.coords.vertices()
         c1 = self.vertice_pixel_coords(v1)
         c2 = self.vertice_pixel_coords(v2)
