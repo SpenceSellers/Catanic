@@ -20,7 +20,7 @@ def random_vertice(coords) -> hexagons.VertexCoord:
 def new_board():
     board = Board()
 
-    tile_places = [hexagons.HexCoord(x, y) for x in range(-5, 6) for y in range(-5, 6) if hexagons.hex_distance((0, 0), (x, y)) < 5]
+    tile_places = [hexagons.HexCoord(x, y) for x in range(-4, 5) for y in range(-5, 5) if hexagons.hex_distance((0, 0), (x, y)) < 4]
     for place in tile_places:
         board.tiles[place] = random_tile(place)
 
@@ -36,9 +36,12 @@ def new_board_started():
 
         vertex = settlement.coords
         for _ in range(7):
-            edge = random.choice(vertex.edges())
+            try:
+                edge = random.choice(vertex.edges())
+                road = Road(player, edge)
+                board.add_road(road)
+            except IllegalMoveError:
+                continue
             vertex = random.choice(edge.vertices())
-            road = Road(player, edge)
-            board.add_road(road)
 
     return board

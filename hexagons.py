@@ -92,15 +92,15 @@ class VertexCoord:
         us = self.normalize()
         if us.vertex == 0:
             return [
-                self.tile.edge(0),
-                self.tile.edge(5),
-                self.tile.through_side(0).edge(4)
+                us.tile.edge(0),
+                us.tile.edge(5),
+                us.tile.through_side(0).edge(4)
             ]
         elif us.vertex == 1:
             return [
-                self.tile.edge(0),
-                self.tile.edge(1),
-                self.tile.through_side(0).edge(2)
+                us.tile.edge(0),
+                us.tile.edge(1),
+                us.tile.through_side(0).edge(2)
             ]
 
 
@@ -134,10 +134,15 @@ class EdgeCoord:
         When addressing edges, the hexagon only "owns" edges 0, 1, and 2. This is because a hexagon has six edges and
         every edge is shared by two hexagons. 6 / 2 = 3 unique edges per hexagon"""
         edge = self.edge % 6
-        if edge in [0, 1, 2]:
+        owned_edges = [0, 1, 2]
+        if edge in owned_edges:
             return EdgeCoord(self.tile, edge)
         else:
             return EdgeCoord(self.tile, edge).swap_side()
+
+    def between_hexes(self) -> List[HexCoord]:
+        return [self.tile, self.swap_side().tile]
+
 
 
 def hex_distance(coord_a: HexCoord, coord_b: HexCoord) -> int:
