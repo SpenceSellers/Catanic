@@ -59,7 +59,8 @@ HEX_SIDE_OFFSETS = {
 class VertexCoord:
     """Represents the coordinates of a single 'corner' of a hexagon in hexagon-space.
 
-    Every vertice """
+    Every vertex is shared by three hexagons. The VertexCoord can be normalized to
+    decide which hexagon it "belongs" to for the purposes of identification."""
     tile: HexCoord
     vertex: int
 
@@ -67,11 +68,11 @@ class VertexCoord:
         return pixel_corner(center, radius, self.vertex)
 
     def normalize(self) -> 'VertexCoord':
-        """Converts a possibly non-normalized VerticeCoord to a singular, comparable, normalized form.
+        """Converts a possibly non-normalized VerrtexCoord to a singular, comparable, normalized form.
 
-        When addressing vertices, a hex only "owns" corner 0 and 1. This is because a hexagon is surrounded
-        by six other hexagons, each intersecting on two corners. By giving each hexagon "ownership" of two corners,
-        we can deterministically decide who owns each corner, and therefore, what the unique name of each corner is.
+        When addressing vertices, a hex only "owns" corner 0 and 1.
+        This is because a hexagon has six vertices, but each vertex is shared by three hexagons. 6 / 3 = 2 unique
+        vertices per hexagon.
         """
 
         vertex = self.vertex % 6
@@ -90,33 +91,53 @@ class VertexCoord:
         """Provides the three edges that lead away from this corner"""
         us = self.normalize()
         if us.vertex == 0:
-            return [self.tile.edge(0), self.tile.edge(5), self.tile.through_side(0).edge(4)]
+            return [
+                self.tile.edge(0),
+                self.tile.edge(5),
+                self.tile.through_side(0).edge(4)
+            ]
         elif us.vertex == 1:
-            return [self.tile.edge(0), self.tile.edge(1), self.tile.through_side(0).edge(2)]
+            return [
+                self.tile.edge(0),
+                self.tile.edge(1),
+                self.tile.through_side(0).edge(2)
+            ]
 
 
 @dataclass(eq=True, frozen=True)
 class EdgeCoord:
+    """Represents the coordinates of a single 'edge' of a hexagon in hexagon-space.
+
+    Each edge belongs to two hexagons. An EdgeCoord can be normalized to decide which of the two hexagons
+    it "belongs" to for the purposes of identification.
+    """
     tile: HexCoord
     edge: int
 
     def vertices(self) -> List[VertexCoord]:
+        """Provides the two vertices that are on either end of this edge."""
         return [
             VertexCoord(self.tile, self.edge).normalize(),
             VertexCoord(self.tile, self.edge + 1).normalize()
         ]
 
+    def swap_side(self) -> 'EdgeCoord':
+        """Provides a (likely denormalized) alternative view of the edge which "belongs" to the hexagon on the other
+        side of the edge."""
+
+        opposite_side = (self.edge + 3) % 6
+        return EdgeCoord(self.tile.through_side(self.edge), opposite_side)
+
     def normalize(self) -> 'EdgeCoord':
-        # When addressing edges, the hexagon only "owns" edges 0, 1, and 2.
+        """Converts a possibly non-normalized EdgeCoord into a singular, comparable normalized form.
+
+        When addressing edges, the hexagon only "owns" edges 0, 1, and 2. This is because a hexagon has six edges and
+        every edge is shared by two hexagons. 6 / 2 = 3 unique edges per hexagon"""
         edge = self.edge % 6
-        if edge == 3:
-            return EdgeCoord(self.tile.through_side(3, 0))
-        if edge == 4:
-            return EdgeCoord(self.tile.through_side(4), 1)
-        if edge == 5:
-            return EdgeCoord(self.tile.through_side(5), 2)
-        else:
+        if edge in [0, 1, 2]:
             return EdgeCoord(self.tile, edge)
+        else:
+            return EdgeCoord(self.tile, edge).swap_side()
 
 
 def hex_distance(coord_a: HexCoord, coord_b: HexCoord) -> int:
