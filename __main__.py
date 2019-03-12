@@ -2,11 +2,11 @@ import queue
 import threading
 import time
 
-import board
+import game
 import game_setup
-import pprint
 import gui
-import hexagons
+from agents import RandomAgent
+
 
 def main():
 
@@ -15,13 +15,22 @@ def main():
     thread = threading.Thread(target=lambda: gui.start(q))
     thread.start()
 
+    board = game_setup.new_board_started()
+    q.put(board)
+
+    agents = {
+        0: RandomAgent(),
+        1: RandomAgent(),
+        2: RandomAgent(),
+        3: RandomAgent()
+    }
+
+    the_game = game.Game(board)
     while True:
-        board = game_setup.new_board_started()
+        time.sleep(1)
+        the_game.tick(agents)
+        q.put(the_game.board)
 
-        q.put(board)
-
-        time.sleep(10)
-    # gui.start(board)
 
 
 

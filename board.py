@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Dict, Tuple
+from typing import Dict, Optional
 
 import hexagons as hex
+from resources import Resource
 
 
 class TileType(Enum):
@@ -12,6 +13,18 @@ class TileType(Enum):
     WHEAT = 'wheat'
     DESERT = 'desert'
 
+    def resource(self) -> Optional[Resource]:
+        if self == TileType.MUD:
+            return Resource.MUD
+        elif self == TileType.STONE:
+            return Resource.STONE
+        elif self == TileType.WHEAT:
+            return Resource.WHEAT
+        elif self == TileType.WOOD:
+            return Resource.WOOD
+        return None
+
+
 
 @dataclass
 class Tile:
@@ -19,12 +32,6 @@ class Tile:
     type: TileType
     number: int
 
-
-class Resource(Enum):
-    STONE = auto()
-    MUD = auto()
-    WHEAT = auto()
-    WOOD = auto()
 
 
 @dataclass
@@ -53,7 +60,7 @@ class Board:
     def is_land(self, coord: hex.HexCoord) -> bool:
         return coord in self.tiles
 
-    def add_settlement(self, settlement: Settlement):
+    def add_settlement(self, settlement: Settlement) -> None:
         if not self.can_build_settlement(settlement):
             raise IllegalMoveError('Cannot build a settlement here')
 
