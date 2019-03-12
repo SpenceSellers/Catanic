@@ -13,6 +13,7 @@ class Game:
     def __init__(self, board: board.Board, num_players: int = 4):
         self.board = board
         self.players = {}
+        self.num_players = num_players
 
         self.next_to_play = 0
 
@@ -35,13 +36,17 @@ class Game:
                 self.give_player_resource(settlement.owner, resource, 2 if settlement.is_city else 1)
 
     def rolled(self, roll: int):
+        print('Rolled', roll)
         for tile in self.board.tiles.values():
             if tile.number == roll:
                 self.dispense_resource(tile.coords)
 
     def do_move(self, player_id: int, move: agents.Move) -> agents.MoveResult:
-        if type(move) == agents.BuildSettlementMove:
-            self.board.add_settlement(board.Settlement(player_id, move.vertex))
+        try:
+            if type(move) == agents.BuildSettlementMove:
+                self.board.add_settlement(board.Settlement(player_id, move.vertex))
+        except board.IllegalMoveError:
+            return agents.FailedMoveResult()
 
         return agents.SuccessfulMoveResult()
 
@@ -58,6 +63,8 @@ class Game:
                 moves.send(result)
         except StopIteration:
             pass
+
+        self.next_to_play = (self.next_to_play + 1) % self.num_players
 
 
 
