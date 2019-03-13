@@ -4,6 +4,7 @@ from typing import Dict
 import agents
 import board
 import player
+import moves
 from agents import Agent
 from hexagons import HexCoord
 from resources import Resource
@@ -41,10 +42,10 @@ class Game:
             if tile.number == roll:
                 self.dispense_resource(tile.coords)
 
-    def do_move(self, player_id: int, move: agents.Move) -> agents.MoveResult:
+    def do_move(self, player_id: int, move: moves.Move) -> moves.MoveResult:
         try:
-            if type(move) == agents.BuildSettlementMove:
-                self.board.add_settlement(board.Settlement(player_id, move.vertex))
+            move_context = moves.MoveContext(self, player_id)
+            move.execute(move_context)
         except board.IllegalMoveError:
             return agents.FailedMoveResult()
 
