@@ -3,9 +3,9 @@ import queue
 from tkinter import *
 import threading
 
-import board
+from catan import board
 
-import hexagons
+from hexagons import hexagons
 
 TILE_COLORS = {
     board.TileType.DESERT: '#a5a27d',

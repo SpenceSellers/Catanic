@@ -2,10 +2,10 @@ import queue
 import threading
 import time
 
-import game
+from catan import game
 import game_setup
-import gui
-from agents import RandomAgent
+from gui import gui
+from catan.agents import RandomAgent
 
 
 def main():

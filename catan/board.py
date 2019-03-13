@@ -1,9 +1,9 @@
 from dataclasses import dataclass
-from enum import Enum, auto
+from enum import Enum
 from typing import Dict, Optional
 
-import hexagons as hex
-from resources import Resource
+from hexagons import hexagons as hex
+from catan.resources import Resource
 
 
 class TileType(Enum):

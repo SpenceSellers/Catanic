@@ -1,9 +1,9 @@
 import random
 from abc import abstractmethod, ABC
 from typing import Generator
-from moves import *
+from catan.moves import *
 
-import game
+from catan import game
 
 
 class Agent(ABC):

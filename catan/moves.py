@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
-from hexagons import VertexCoord
-import game
-import board
+from hexagons.hexagons import VertexCoord
+from catan import game, board
+
 
 @dataclass
 class MoveContext:

@@ -1,4 +1,4 @@
-from resources import Resource
+from catan.resources import Resource
 
 
 class Player:

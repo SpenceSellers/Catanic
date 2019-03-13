@@ -1,7 +1,6 @@
-from board import *
+from catan.board import *
 import random
-import hexagons
-
+from hexagons import hexagons
 
 
 def random_tile_type() -> TileType:

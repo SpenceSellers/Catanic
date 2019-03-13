@@ -1,4 +1,4 @@
-from hexagons import *
+from hexagons.hexagons import *
 import pytest
 
 

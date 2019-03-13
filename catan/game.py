@@ -1,13 +1,10 @@
 import random
 from typing import Dict
 
-import agents
-import board
-import player
-import moves
-from agents import Agent
-from hexagons import HexCoord
-from resources import Resource
+from catan import board, player, moves, agents
+from catan.agents import Agent
+from hexagons.hexagons import HexCoord
+from catan.resources import Resource
 
 
 class Game:
@@ -38,9 +35,16 @@ class Game:
 
     def rolled(self, roll: int):
         print('Rolled', roll)
-        for tile in self.board.tiles.values():
-            if tile.number == roll:
-                self.dispense_resource(tile.coords)
+        if roll == 7:
+            self.roll_seven()
+        else:
+            for tile in self.board.tiles.values():
+                if tile.number == roll:
+                    self.dispense_resource(tile.coords)
+
+    def roll_seven(self):
+        # TODO
+        pass
 
     def do_move(self, player_id: int, move: moves.Move) -> moves.MoveResult:
         try:
@@ -52,16 +56,17 @@ class Game:
         return agents.SuccessfulMoveResult()
 
     def tick(self, ags: Dict[int, Agent]):
+        """Performs one turn of the game"""
         roll = random.randint(1, 7) + random.randint(1, 7)
         self.rolled(roll)
 
-        moves = ags[self.next_to_play].do_moves(self)
+        move_generator = ags[self.next_to_play].do_moves(self)
         try:
             while True:
-                move = next(moves)
+                move = next(move_generator)
                 print('Running move', move)
                 result = self.do_move(self.next_to_play, move)
-                moves.send(result)
+                move_generator.send(result)
         except StopIteration:
             pass
 
