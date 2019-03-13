@@ -1,6 +1,5 @@
-from hexagons.hexagons import *
 import pytest
-
+from hexagons.hexagons import *
 
 class TestHexCoord:
     @pytest.mark.parametrize('coord, side, expected', [

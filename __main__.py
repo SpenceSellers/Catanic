@@ -5,7 +5,7 @@ import time
 from catan import game
 import game_setup
 from gui import gui
-from catan.agents import RandomAgent
+from agents.agents import RandomAgent
 
 
 def main():

@@ -1,8 +1,9 @@
 import random
 from typing import Dict
 
-from catan import board, player, moves, agents
-from catan.agents import Agent
+from catan import board, player, moves
+from agents import agents
+from agents.agents import Agent
 from hexagons.hexagons import HexCoord
 from catan.resources import Resource
 
