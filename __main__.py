@@ -1,7 +1,7 @@
 import queue
 import threading
-import time
 import logging
+import itertools
 
 from catan import game
 import game_setup
@@ -27,10 +27,10 @@ def main():
     }
 
     the_game = game.Game(board)
-    while True:
-        time.sleep(0.05)
+    for i in itertools.count():
         the_game.tick(agents)
-        q.put(the_game.board)
+        if i % 1000 == 0:
+            q.put(the_game.board)
 
 
 if __name__ == '__main__':

@@ -44,7 +44,7 @@ def new_board_started():
             while True:
                 try:
                     settlement = Settlement(player, random_vertice(tiles))
-                    board.add_settlement(settlement)
+                    board.add_settlement(settlement, allow_free_placement=True)
                     break
                 except IllegalMoveError:
                     pass
@@ -53,7 +53,7 @@ def new_board_started():
             try:
                 edge = random.choice(vertex.edges())
                 road = Road(player, edge)
-                board.add_road(road)
+                board.add_road(road, free_placement=True)
             except IllegalMoveError:
                 continue
 
