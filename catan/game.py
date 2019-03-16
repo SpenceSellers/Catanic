@@ -61,13 +61,13 @@ class Game:
         roll = random.randint(1, 7) + random.randint(1, 7)
         self.rolled(roll)
 
-        move_generator = ags[self.next_to_play].do_moves(self)
+        move_generator = ags[self.next_to_play].play_turn(self)
+        move = next(move_generator)
         try:
             while True:
-                move = next(move_generator)
                 print('Running move', move)
                 result = self.do_move(self.next_to_play, move)
-                move_generator.send(result)
+                move = move_generator.send(result)
         except StopIteration:
             pass
 

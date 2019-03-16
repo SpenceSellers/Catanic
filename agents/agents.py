@@ -8,13 +8,13 @@ from catan import game
 
 class Agent(ABC):
     @abstractmethod
-    def do_moves(self, game: 'game.Game') -> Generator[Move, MoveResult, None]:
+    def play_turn(self, game: 'game.Game') -> Generator[Move, MoveResult, None]:
         pass
 
 
 class RandomAgent(Agent):
-    def do_moves(self, game: 'game.Game') -> Generator[Move, MoveResult, None]:
+    def play_turn(self, game: 'game.Game') -> Generator[Move, MoveResult, None]:
         rand_tile = random.choice(list(game.board.tiles.keys()))
         rand_vertex = random.choice(list(rand_tile.vertices()))
-        r1 = yield BuildSettlementMove(rand_vertex)
-        result = yield
+        result = yield BuildSettlementMove(rand_vertex)
+        print("Agent's result of move is", result)
