@@ -15,7 +15,8 @@ class Hand:
             Resource.WHEAT: 0,
             Resource.STONE: 0,
             Resource.MUD: 0,
-            Resource.WOOD: 0
+            Resource.WOOD: 0,
+            Resource.SHEEP: 0
         }
 
     def add_resource(self, resource: Resource, quantity: int = 1):
@@ -37,5 +38,6 @@ class Hand:
 
 
 class NotEnoughResourcesError(Exception):
-    pass
+    def __init__(self):
+        super().__init__("Not enough resources")
 

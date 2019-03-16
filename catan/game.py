@@ -71,6 +71,7 @@ class Game:
 
                 if not result_of_move.successful:
                     logging.info(f"Player {self.next_to_play}'s move failed because {result_of_move.results}")
+
                 move = move_generator.send(result_of_move)
         except StopIteration:
             pass

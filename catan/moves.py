@@ -50,6 +50,7 @@ class BuildSettlementMove(Move):
         try:
             ctx.game.board.add_settlement(settlement)
             return MoveResult(True, None)
+
         except board.IllegalMoveError as e:
             return MoveResult(False, e)
 
