@@ -25,13 +25,11 @@ class TileType(Enum):
         return None
 
 
-
 @dataclass
 class Tile:
     coords: hex.HexCoord
     type: TileType
     number: int
-
 
 
 @dataclass

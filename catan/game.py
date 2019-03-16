@@ -23,6 +23,8 @@ class Game:
         self.players[player_id].hand.add_resource(resource, quantity)
 
     def dispense_resource(self, coord: HexCoord):
+        """Causes a given tile to give its resources to those with settlements on the tile."""
+
         tile = self.board.tiles[coord]
         resource = tile.type.resource()
         if not resource:
@@ -48,29 +50,28 @@ class Game:
         pass
 
     def do_move(self, player_id: int, move: moves.Move) -> moves.MoveResult:
-        try:
-            move_context = moves.MoveContext(self, player_id)
-            move.execute(move_context)
-        except board.IllegalMoveError:
-            return agents.FailedMoveResult()
+        """Executes a player's Move"""
+        move_context = moves.MoveContext(self, player_id)
+        return move.execute(move_context)
 
-        return agents.SuccessfulMoveResult()
-
-    def tick(self, ags: Dict[int, Agent]):
+    def tick(self, player_agents: Dict[int, Agent]):
         """Performs one turn of the game"""
         roll = random.randint(1, 7) + random.randint(1, 7)
         self.rolled(roll)
 
-        move_generator = ags[self.next_to_play].play_turn(self)
+        move_generator = player_agents[self.next_to_play].play_turn(self)
+
+        # Advance to the first yield point
         move = next(move_generator)
         try:
             while True:
                 print('Running move', move)
-                result = self.do_move(self.next_to_play, move)
-                move = move_generator.send(result)
+                result_of_move = self.do_move(self.next_to_play, move)
+                move = move_generator.send(result_of_move)
         except StopIteration:
             pass
 
+        # Advance to next player's turn
         self.next_to_play = (self.next_to_play + 1) % self.num_players
 
 

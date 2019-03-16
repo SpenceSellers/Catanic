@@ -9,7 +9,6 @@ from agents.agents import RandomAgent
 
 
 def main():
-
     q = queue.Queue()
 
     thread = threading.Thread(target=lambda: gui.start(q))
@@ -30,9 +29,6 @@ def main():
         time.sleep(1)
         the_game.tick(agents)
         q.put(the_game.board)
-
-
-
 
 
 if __name__ == '__main__':
