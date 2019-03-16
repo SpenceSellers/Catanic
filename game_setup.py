@@ -50,13 +50,11 @@ def new_board_started():
                     pass
 
             vertex = settlement.coords
-            for _ in range(7):
-                try:
-                    edge = random.choice(vertex.edges())
-                    road = Road(player, edge)
-                    board.add_road(road)
-                    vertex = random.choice(edge.vertices())
-                except IllegalMoveError:
-                    continue
+            try:
+                edge = random.choice(vertex.edges())
+                road = Road(player, edge)
+                board.add_road(road)
+            except IllegalMoveError:
+                continue
 
     return board

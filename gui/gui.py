@@ -12,7 +12,8 @@ TILE_COLORS = {
     board.TileType.MUD: '#9e6c1c',
     board.TileType.STONE: '#7589a8',
     board.TileType.WHEAT: '#8f9131',
-    board.TileType.WOOD: '#273f0c'
+    board.TileType.WOOD: '#273f0c',
+    board.TileType.SHEEP: '#7fea67'
 }
 
 PLAYER_COLORS = {

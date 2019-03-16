@@ -25,7 +25,7 @@ class Hand:
 
     def take_resources(self, demanded_resources: Dict[Resource, int]) -> None:
         if self.has_resources(demanded_resources):
-            for resource, quantity in demanded_resources.values():
+            for resource, quantity in demanded_resources.items():
                 self.resources[resource] -= quantity
         else:
             raise NotEnoughResourcesError()

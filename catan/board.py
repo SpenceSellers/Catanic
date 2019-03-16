@@ -11,6 +11,7 @@ class TileType(Enum):
     MUD = 'mud'
     WOOD = 'wood'
     WHEAT = 'wheat'
+    SHEEP = 'sheep'
     DESERT = 'desert'
 
     def resource(self) -> Optional[Resource]:
@@ -22,6 +23,8 @@ class TileType(Enum):
             return Resource.WHEAT
         elif self == TileType.WOOD:
             return Resource.WOOD
+        elif self == TileType.SHEEP:
+            return Resource.SHEEP
         return None
 
 
