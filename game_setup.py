@@ -39,22 +39,24 @@ def new_board_started():
     board = new_board()
     tiles = list(board.tiles.keys())
     for player in range(4):
-        while True:
-            try:
-                settlement = Settlement(player, random_vertice(tiles))
-                board.add_settlement(settlement)
-                break
-            except IllegalMoveError:
-                pass
+        # Both settlements
+        for _ in range(2):
+            while True:
+                try:
+                    settlement = Settlement(player, random_vertice(tiles))
+                    board.add_settlement(settlement)
+                    break
+                except IllegalMoveError:
+                    pass
 
-        vertex = settlement.coords
-        for _ in range(7):
-            try:
-                edge = random.choice(vertex.edges())
-                road = Road(player, edge)
-                board.add_road(road)
-                vertex = random.choice(edge.vertices())
-            except IllegalMoveError:
-                continue
+            vertex = settlement.coords
+            for _ in range(7):
+                try:
+                    edge = random.choice(vertex.edges())
+                    road = Road(player, edge)
+                    board.add_road(road)
+                    vertex = random.choice(edge.vertices())
+                except IllegalMoveError:
+                    continue
 
     return board

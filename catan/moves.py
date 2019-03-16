@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Any
 
+from catan.board import IllegalMoveError
 from catan.player import Player, NotEnoughResourcesError
 from catan.resources import Resource
 from hexagons.hexagons import VertexCoord
@@ -43,16 +44,16 @@ class BuildSettlementMove(Move):
 
         try:
             ctx.player().hand.take_resources(cost)
+            settlement = board.Settlement(ctx.player_id, self.vertex)
+            ctx.game.board.add_settlement(settlement)
+
         except NotEnoughResourcesError as e:
             return MoveResult(False, e)
-
-        settlement = board.Settlement(ctx.player_id, self.vertex)
-        try:
-            ctx.game.board.add_settlement(settlement)
-            return MoveResult(True, None)
-
-        except board.IllegalMoveError as e:
+        except IllegalMoveError as e:
             return MoveResult(False, e)
+
+        return MoveResult(True, None)
+
 
 
 @dataclass
