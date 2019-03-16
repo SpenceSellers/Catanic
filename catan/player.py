@@ -1,3 +1,5 @@
+from typing import Dict
+
 from catan.resources import Resource
 
 
@@ -17,4 +19,23 @@ class Hand:
         }
 
     def add_resource(self, resource: Resource, quantity: int = 1):
+        print(self.resources)
         self.resources[resource] += quantity
+
+    def take_resources(self, demanded_resources: Dict[Resource, int]) -> None:
+        if self.has_resources(demanded_resources):
+            for resource, quantity in demanded_resources.values():
+                self.resources[resource] -= quantity
+        else:
+            raise NotEnoughResourcesError()
+
+    def has_resources(self, resources: Dict[Resource, int]) -> bool:
+        for resource, quantity in resources.items():
+            if self.resources[resource] < quantity:
+                return False
+        return True
+
+
+class NotEnoughResourcesError(Exception):
+    pass
+

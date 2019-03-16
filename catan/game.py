@@ -1,3 +1,4 @@
+import logging
 import random
 from typing import Dict
 
@@ -37,7 +38,7 @@ class Game:
                 self.give_player_resource(settlement.owner, resource, 2 if settlement.is_city else 1)
 
     def rolled(self, roll: int):
-        print('Rolled', roll)
+        logging.info(f'Number was rolled: {roll}')
         if roll == 7:
             self.roll_seven()
         else:
@@ -65,8 +66,11 @@ class Game:
         move = next(move_generator)
         try:
             while True:
-                print('Running move', move)
+                logging.info(f'Player {self.next_to_play} is playing move {move}')
                 result_of_move = self.do_move(self.next_to_play, move)
+
+                if not result_of_move.successful:
+                    logging.info(f"Player {self.next_to_play}'s move failed because {result_of_move.results}")
                 move = move_generator.send(result_of_move)
         except StopIteration:
             pass

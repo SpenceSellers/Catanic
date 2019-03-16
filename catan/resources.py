@@ -6,4 +6,5 @@ class Resource(Enum):
     MUD = auto()
     WHEAT = auto()
     WOOD = auto()
+    SHEEP = auto()
 

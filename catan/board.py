@@ -59,6 +59,8 @@ class Board:
         return coord in self.tiles
 
     def add_settlement(self, settlement: Settlement) -> None:
+        if settlement.coords != settlement.coords.normalize():
+            raise Exception("Uh oh")
         if not self.can_build_settlement(settlement):
             raise IllegalMoveError('Cannot build a settlement here')
 

@@ -7,8 +7,17 @@ def random_tile_type() -> TileType:
     return random.choice(list(TileType))
 
 
+def random_tile_number() -> int:
+    # A tile cannot have a number of 7, so we only have 11 options instead of 12.
+    rand = random.randint(1, 11)
+    if rand == 7:
+        return rand + 1
+    else:
+        return rand
+
+
 def random_tile(coords) -> Tile:
-    return Tile(coords, random_tile_type(), random.randint(1, 12))
+    return Tile(coords, random_tile_type(), random_tile_number())
 
 
 def random_vertice(coords) -> hexagons.VertexCoord:

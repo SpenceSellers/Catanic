@@ -17,4 +17,3 @@ class RandomAgent(Agent):
         rand_tile = random.choice(list(game.board.tiles.keys()))
         rand_vertex = random.choice(list(rand_tile.vertices()))
         result = yield BuildSettlementMove(rand_vertex)
-        print("Agent's result of move is", result)
