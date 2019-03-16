@@ -14,6 +14,7 @@ class Game:
         self.board = board
         self.players = {}
         self.num_players = num_players
+        self.turn_number = 0
 
         self.next_to_play = 0
 
@@ -78,6 +79,7 @@ class Game:
 
         # Advance to next player's turn
         self.next_to_play = (self.next_to_play + 1) % self.num_players
+        self.turn_number += 1
 
 
 

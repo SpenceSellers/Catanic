@@ -2,8 +2,9 @@ import math
 import queue
 from tkinter import *
 import threading
+import logging
 
-from catan import board
+from catan import board, game
 
 from hexagons import hexagons
 
@@ -27,6 +28,26 @@ PLAYER_COLORS = {
 
 
 class App(Frame):
+    def __init__(self, master=None):
+        super().__init__(master)
+        self.master = master
+        self.pack()
+
+        self.board = BoardFrame(self)
+        self.board.pack(side='bottom')
+
+        self.turn_counter = Label(self)
+        self.turn_counter.pack()
+
+    def draw_game(self, game: game.Game):
+        self.board.draw_board(game.board)
+        self.turn_counter.configure(text=str(game.turn_number))
+
+    def clear(self):
+        self.board.clear()
+
+
+class BoardFrame(Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
@@ -129,21 +150,22 @@ class App(Frame):
     def clear(self):
         self.canvas.delete(ALL)
 
-def qthread(q: queue.Queue, app: Frame):
-    print('Starting event thread')
+
+def queue_thread_func(q: queue.Queue, app: Frame):
+    logging.info('Starting GUI queue thread')
     while True:
-        print('Boarding!')
-        board = q.get(True)
+        logging.debug('Showing board state')
+        game = q.get(True)
+        print(game)
         app.clear()
 
-        app.draw_board(board)
+        app.draw_game(game)
 
-        # app.update()
 
 def start(q: queue.Queue):
     root = Tk()
     # root.geometry('1000x500')
     app = App(master=root)
-    queue_thread = threading.Thread(target=lambda: qthread(q, app))
+    queue_thread = threading.Thread(target=lambda: queue_thread_func(q, app), daemon=True)
     queue_thread.start()
     app.mainloop()
