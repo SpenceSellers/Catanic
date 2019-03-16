@@ -44,6 +44,10 @@ class HexCoord:
         """Provides the coordinates of a particular edge on this hexagon (shared with one other hexagon)"""
         return EdgeCoord(self, side).normalize()
 
+    def edges(self) -> Iterable['EdgeCoord']:
+        for i in range(6):
+            yield EdgeCoord(self, i).normalize()
+
 
 HEX_SIDE_OFFSETS = {
     0: HexCoord(1, 0),
