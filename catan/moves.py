@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Any
 from abc import ABC, abstractmethod
+import random
 
 from catan.board import IllegalMoveError
 from catan.player import Player, NotEnoughResourcesError
@@ -105,4 +106,33 @@ class BuildRoadMove(Move):
         return MoveResult(True, None)
 
 
+class ProposeTradeMove(Move):
+    def __init__(self, offering, wants):
+        self.offering = offering
+        self.wants = wants
+
+    def validate(self, ctx: MoveContext):
+        if not ctx.player().hand.has_resources(self.offering):
+            return MoveResult(False, "Does not have offered resources")
+        return MoveResult(True, None)
+
+    def perform(self, ctx: MoveContext) -> MoveResult:
+        agent_items = list(ctx.game.agents.items())
+        # Propose in a random order
+        random.shuffle(agent_items)
+        for player_id, agent in ctx.game.agents.items():
+            player = ctx.game.players[player_id]
+            if agent.would_accept_trade(ctx.game, self.offering, self.wants) and player.hand.has_resources(self.wants):
+                player.hand.take_resources(self.wants)
+                ctx.player().hand.add_resources(self.wants)
+                player.hand.add_resources(self.offering)
+                ctx.player().hand.take_resources(self.offering)
+                return MoveResult(True, None)
+
+        return MoveResult(False, "Nobody wanted to trade")
+
+    def __str__(self):
+        return f"Trade {self.wants} for {self.offering}"
+
+        
 

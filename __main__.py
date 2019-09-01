@@ -30,11 +30,12 @@ def main():
         3: RandomAgent()
     }
 
-    the_game = game.Game(board)
+    the_game = game.Game(board, agents)
     q.put(the_game)
     for i in itertools.count():
         the_game.tick(agents)
         q.put(the_game)
+        time.sleep(0.05)
 
 
 if __name__ == '__main__':

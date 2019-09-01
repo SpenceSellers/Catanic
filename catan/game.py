@@ -10,8 +10,9 @@ from catan.resources import Resource
 
 
 class Game:
-    def __init__(self, board: board.Board, num_players: int = 4):
+    def __init__(self, board: board.Board, agents: Dict[int, Agent], num_players: int = 4):
         self.board = board
+        self.agents = agents
         self.players = {}
         self.num_players = num_players
         self.turn_number = 0
@@ -62,6 +63,8 @@ class Game:
         self.rolled(roll)
 
         move_generator = player_agents[self.next_to_play].play_turn(self)
+        logging.info(f"PLAYER {self.next_to_play} BEGIN TURN NUMBER {self.turn_number}")
+        logging.info(f"Player has {self.players[self.next_to_play].hand.resources}")
 
         # Advance to the first yield point
         move = next(move_generator)
@@ -72,10 +75,14 @@ class Game:
 
                 if not result_of_move.successful:
                     logging.info(f"Player {self.next_to_play}'s move failed because {result_of_move.results}")
+                else:
+                    logging.info(f"The move was successful")
 
                 move = move_generator.send(result_of_move)
         except StopIteration:
             pass
+
+        logging.info(f"PLAYER {self.next_to_play} END TURN")
 
         # Advance to next player's turn
         self.next_to_play = (self.next_to_play + 1) % self.num_players

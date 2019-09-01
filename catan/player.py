@@ -20,8 +20,11 @@ class Hand:
         }
 
     def add_resource(self, resource: Resource, quantity: int = 1):
-        print(self.resources)
         self.resources[resource] += quantity
+
+    def add_resources(self, resources: Dict[Resource, int]):
+        for resource, quantity in resources.items():
+            self.add_resource(resource, quantity)
 
     def take_resources(self, demanded_resources: Dict[Resource, int]) -> None:
         if self.has_resources(demanded_resources):
