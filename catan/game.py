@@ -8,6 +8,8 @@ from agents.agents import Agent
 from hexagons.hexagons import HexCoord
 from catan.resources import Resource
 
+WINNING_VICTORY_POINTS = 10
+
 
 class Game:
     def __init__(self, board: board.Board, agents: Dict[int, Agent], num_players: int = 4):
@@ -52,12 +54,20 @@ class Game:
         # TODO
         pass
 
+    def get_victory_points(self, player_id: int) -> int:
+        count = 0
+        for settlement in self.board.settlements.values():
+            if settlement.owner == player_id:
+                count += 2 if settlement.is_city else 1
+
+        return count
+
     def do_move(self, player_id: int, move: moves.Move) -> moves.MoveResult:
         """Executes a player's Move"""
         move_context = moves.MoveContext(self, player_id)
         return move.execute(move_context)
 
-    def tick(self, player_agents: Dict[int, Agent]):
+    def tick(self, player_agents: Dict[int, Agent]) -> bool:
         """Performs one turn of the game"""
         roll = random.randint(1, 7) + random.randint(1, 7)
         self.rolled(roll)
@@ -82,13 +92,14 @@ class Game:
         except StopIteration:
             pass
 
-        logging.info(f"PLAYER {self.next_to_play} END TURN")
+        victory_points = self.get_victory_points(self.next_to_play)
+        logging.info(f"PLAYER {self.next_to_play} END TURN with {victory_points} points")
+        if victory_points >= WINNING_VICTORY_POINTS:
+            logging.info(f'PLAYER {self.next_to_play} WON')
+            return False
 
         # Advance to next player's turn
         self.next_to_play = (self.next_to_play + 1) % self.num_players
         self.turn_number += 1
 
-
-
-
-
+        return True

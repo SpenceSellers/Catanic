@@ -33,9 +33,13 @@ def main():
     the_game = game.Game(board, agents)
     q.put(the_game)
     for i in itertools.count():
-        the_game.tick(agents)
-        q.put(the_game)
-        time.sleep(0.05)
+        ongoing = the_game.tick(agents)
+        if i % 200 == 0:
+            q.put(the_game)
+            time.sleep(0.1)
+
+        if not ongoing:
+            time.sleep(10000)
 
 
 if __name__ == '__main__':
