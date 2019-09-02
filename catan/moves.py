@@ -78,6 +78,9 @@ class BuildSettlementMove(Move):
 
         return MoveResult(True, None)
 
+    def __str__(self):
+        return f"[Build settlement at {self.vertex}]"
+
 
 class UpgradeSettlementMove(Move):
     cost = {
@@ -109,6 +112,9 @@ class UpgradeSettlementMove(Move):
         settlement.is_city = True
         return MoveResult(True, None)
 
+    def __str__(self):
+        return f"[Upgrade settlement at {self.vertex}]"
+
 
 class BuildRoadMove(Move):
     cost = {
@@ -135,6 +141,9 @@ class BuildRoadMove(Move):
         ctx.game.board.add_road(road)
 
         return MoveResult(True, None)
+
+    def __str__(self):
+        return f"[Build Road at {self.edge}]"
 
 
 class ProposeTradeMove(Move):
@@ -163,7 +172,7 @@ class ProposeTradeMove(Move):
         return MoveResult(False, "Nobody wanted to trade")
 
     def __str__(self):
-        return f"Trade {self.wants} for {self.offering}"
+        return f"[Trade {self.wants} for {self.offering}]"
 
         
 
