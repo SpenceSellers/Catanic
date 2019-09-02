@@ -32,6 +32,9 @@ class RandomAgent(Agent):
 
         result = yield ProposeTradeMove({rand_resource_want: 1}, {rand_resource_offering: 1})
 
+        rand_vertex = random.choice(list(rand_tile.vertices()))
+        result = yield UpgradeSettlementMove(rand_vertex)
+
     def would_accept_trade(self, game: 'game.Game', offering, wants):
         return random.choice([True, False])
 

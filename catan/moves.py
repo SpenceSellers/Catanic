@@ -79,6 +79,37 @@ class BuildSettlementMove(Move):
         return MoveResult(True, None)
 
 
+class UpgradeSettlementMove(Move):
+    cost = {
+        Resource.WHEAT: 2,
+        Resource.STONE: 3
+    }
+
+    def __init__(self, vertex: VertexCoord):
+        self.vertex = vertex
+
+    def validate(self, ctx: MoveContext) -> MoveResult:
+        if not ctx.player().hand.has_resources(self.cost):
+            return MoveResult(False, "Not enough resources")
+
+        settlement = ctx.game.board.settlements.get(self.vertex)
+        if not settlement:
+            return MoveResult(False, "No settlement here to upgrade")
+
+        if settlement.is_city:
+            return MoveResult(False, "This settlement is already a city")
+
+        if settlement.owner != ctx.player_id:
+            return MoveResult(False, "Cannot upgrade someone else's settlement")
+
+        return MoveResult(True, None)
+
+    def perform(self, ctx: MoveContext) -> MoveResult:
+        settlement = ctx.game.board.settlements[self.vertex]
+        settlement.is_city = True
+        return MoveResult(True, None)
+
+
 class BuildRoadMove(Move):
     cost = {
         Resource.WOOD: 1,

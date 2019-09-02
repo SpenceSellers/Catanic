@@ -124,14 +124,24 @@ class BoardFrame(Frame):
     def draw_settlement(self, settlement: board.Settlement):
         coords = self.vertice_pixel_coords(settlement.coords)
 
-        rectangle_size = 10
-        self.canvas.create_rectangle(
-            coords[0] - rectangle_size,
-            coords[1] - rectangle_size,
-            coords[0] + rectangle_size,
-            coords[1] + rectangle_size,
-            fill=PLAYER_COLORS[settlement.owner]
-        )
+        if settlement.is_city:
+            rectangle_size = 15
+            self.canvas.create_rectangle(
+                coords[0] - rectangle_size,
+                coords[1] - rectangle_size,
+                coords[0] + rectangle_size,
+                coords[1] + rectangle_size,
+                fill=PLAYER_COLORS[settlement.owner]
+            )
+        else:
+            rectangle_size = 10
+            self.canvas.create_rectangle(
+                coords[0] - rectangle_size,
+                coords[1] - rectangle_size,
+                coords[0] + rectangle_size,
+                coords[1] + rectangle_size,
+                fill=PLAYER_COLORS[settlement.owner]
+            )
 
     def draw_road(self, road: board.Road):
         [v1, v2] = road.coords.vertices()
