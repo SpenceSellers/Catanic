@@ -2,9 +2,13 @@ import pytest
 from catan.player import *
 
 
+@pytest.fixture()
+def hand():
+    return Hand()
+
+
 class TestPlayerHand:
-    def test_adding_single_resource_types(self):
-        hand = Hand()
+    def test_adding_single_resource_types(self, hand):
         hand.add_resource(Resource.SHEEP, 1)
         hand.add_resource(Resource.WOOD, 5)
         hand.add_resource(Resource.SHEEP, 2)
@@ -13,29 +17,25 @@ class TestPlayerHand:
         assert hand.resources[Resource.STONE] == 0
         assert hand.resources[Resource.WOOD] == 5
 
-    def test_adding_resource_defaults_to_quantity_of_one(self):
-        hand = Hand()
+    def test_adding_resource_defaults_to_quantity_of_one(self, hand):
         hand.add_resource(Resource.SHEEP)
-        
+
         assert hand.resources[Resource.SHEEP] == 1
 
-    def test_removing_resources(self):
-        hand = Hand()
+    def test_removing_resources(self, hand):
         hand.add_resource(Resource.STONE, 5)
         hand.take_resources({Resource.STONE: 2})
         assert hand.resources[Resource.STONE] == 3
 
-    def test_removing_too_many_resources(self):
-        hand = Hand()
+    def test_removing_too_many_resources(self, hand):
+        hand.add_resource(Resource.SHEEP, 5)
         with pytest.raises(NotEnoughResourcesError):
-            hand.add_resource(Resource.SHEEP, 5)
             hand.take_resources({Resource.SHEEP: 10})
 
         # It shouldn't have affected the values
         assert hand.resources[Resource.SHEEP] == 5, "Since it failed, the values should not have been affected"
 
-    def test_has_resources(self):
-        hand = Hand()
+    def test_has_resources(self, hand):
         hand.add_resources({
             Resource.SHEEP: 5,
             Resource.MUD: 5
