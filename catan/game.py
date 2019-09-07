@@ -12,17 +12,20 @@ WINNING_VICTORY_POINTS = 10
 
 
 class Game:
-    def __init__(self, board: board.Board, agents: Dict[int, Agent], num_players: int = 4):
+    def __init__(self, board: board.Board, agents: Dict[int, Agent]):
         self.board = board
         self.agents = agents
         self.players = {}
-        self.num_players = num_players
+        self.num_players = len(agents)
         self.turn_number = 0
 
         self.next_to_play = 0
 
-        for i in range(num_players):
+        for i in range(self.num_players):
             self.players[i] = player.Player(i)
+
+        for (id, agent) in agents.items():
+            agent.join_game(self, id)
 
     def give_player_resource(self, player_id: int, resource: Resource, quantity: int = 1):
         self.players[player_id].hand.add_resource(resource, quantity)
