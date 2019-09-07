@@ -15,6 +15,9 @@ class TestPlayerHand:
 
     def test_adding_resource_defaults_to_quantity_of_one(self):
         hand = Hand()
+        hand.add_resource(Resource.SHEEP)
+        
+        assert hand.resources[Resource.SHEEP] == 1
 
     def test_removing_resources(self):
         hand = Hand()
