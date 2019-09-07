@@ -12,11 +12,11 @@ class Agent(ABC):
     game: 'game.Game'
 
     @abstractmethod
-    def play_turn(self, game: 'game.Game') -> Generator[Move, MoveResult, None]:
+    def play_turn(self) -> Generator[Move, MoveResult, None]:
         pass
 
     @abstractmethod
-    def would_accept_trade(self, game: 'game.Game', offering, wants):
+    def would_accept_trade(self, offering, wants):
         pass
 
     def join_game(self, game, player_id):
@@ -29,15 +29,15 @@ class Agent(ABC):
 
 
 class RandomAgent(Agent):
-    def play_turn(self, game: 'game.Game') -> Generator[Move, MoveResult, None]:
-        rand_tile = random.choice(list(game.board.tiles.keys()))
+    def play_turn(self) -> Generator[Move, MoveResult, None]:
+        rand_tile = random.choice(list(self.game.board.tiles.keys()))
         rand_vertex = random.choice(list(rand_tile.vertices()))
         result = yield BuildSettlementMove(rand_vertex)
 
         rand_vertex = random.choice(list(rand_tile.vertices()))
         result = yield UpgradeSettlementMove(rand_vertex)
 
-        rand_tile: HexCoord = random.choice(list(game.board.tiles.keys()))
+        rand_tile: HexCoord = random.choice(list(self.game.board.tiles.keys()))
         rand_edge: EdgeCoord = random.choice(list(rand_tile.edges()))
         result = yield BuildRoadMove(rand_edge)
 
@@ -50,20 +50,20 @@ class RandomAgent(Agent):
         rand_resource_offering = random.choice(list(Resource))
         result = yield ExchangeMove({rand_resource_offering: 4}, rand_resource_want)
 
-    def would_accept_trade(self, game: 'game.Game', offering, wants):
+    def would_accept_trade(self, offering, wants):
         return random.choice([True, False])
 
 
 class InformedRandomAgent(Agent):
-    def play_turn(self, game: 'game.Game') -> Generator[Move, MoveResult, None]:
-        rand_tile = random.choice(list(game.board.tiles.keys()))
+    def play_turn(self) -> Generator[Move, MoveResult, None]:
+        rand_tile = random.choice(list(self.game.board.tiles.keys()))
         rand_vertex = random.choice(list(rand_tile.vertices()))
         result = yield BuildSettlementMove(rand_vertex)
 
         rand_vertex = random.choice(list(rand_tile.vertices()))
         result = yield UpgradeSettlementMove(rand_vertex)
 
-        rand_tile: HexCoord = random.choice(list(game.board.tiles.keys()))
+        rand_tile: HexCoord = random.choice(list(self.game.board.tiles.keys()))
         rand_edge: EdgeCoord = random.choice(list(rand_tile.edges()))
         result = yield BuildRoadMove(rand_edge)
 
@@ -76,6 +76,6 @@ class InformedRandomAgent(Agent):
         rand_resource_offering = random.choice(list(Resource))
         result = yield ExchangeMove({rand_resource_offering: 4}, rand_resource_want)
 
-    def would_accept_trade(self, game: 'game.Game', offering, wants):
+    def would_accept_trade(self, offering, wants):
         return random.choice([True, False])
 

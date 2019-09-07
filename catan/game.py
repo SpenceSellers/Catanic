@@ -75,7 +75,7 @@ class Game:
         roll = random.randint(1, 7) + random.randint(1, 7)
         self.rolled(roll)
 
-        move_generator = player_agents[self.next_to_play].play_turn(self)
+        move_generator = player_agents[self.next_to_play].play_turn()
         logging.info(f"PLAYER {self.next_to_play} BEGIN TURN NUMBER {self.turn_number}")
         logging.info(f"Player has {self.players[self.next_to_play].hand.resources}")
 

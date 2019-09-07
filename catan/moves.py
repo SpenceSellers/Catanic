@@ -173,7 +173,7 @@ class ProposeTradeMove(Move):
         random.shuffle(agent_items)
         for player_id, agent in ctx.game.agents.items():
             player = ctx.game.players[player_id]
-            if agent.would_accept_trade(ctx.game, self.offering, self.wants) and player.hand.has_resources(self.wants):
+            if agent.would_accept_trade(self.offering, self.wants) and player.hand.has_resources(self.wants):
                 player.hand.take_resources(self.wants)
                 ctx.player().hand.add_resources(self.wants)
                 player.hand.add_resources(self.offering)
