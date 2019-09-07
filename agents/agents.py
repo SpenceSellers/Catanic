@@ -33,7 +33,11 @@ class RandomAgent(Agent):
         rand_resource_want = random.choice(list(Resource))
         rand_resource_offering = random.choice(list(Resource))
 
-        result = yield ProposeTradeMove({rand_resource_want: 1}, {rand_resource_offering: 1})
+        result = yield ProposeTradeMove({rand_resource_offering: 1}, {rand_resource_want: 1})
+
+        rand_resource_want = random.choice(list(Resource))
+        rand_resource_offering = random.choice(list(Resource))
+        result = yield ExchangeMove({rand_resource_offering: 4}, rand_resource_want)
 
     def would_accept_trade(self, game: 'game.Game', offering, wants):
         return random.choice([True, False])

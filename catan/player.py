@@ -9,6 +9,9 @@ class Player:
         self.hand = Hand()
 
 
+ResourceSet = Dict[Resource, int]
+
+
 class Hand:
     def __init__(self):
         self.resources = {

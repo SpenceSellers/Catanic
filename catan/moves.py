@@ -1,10 +1,10 @@
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Dict
 from abc import ABC, abstractmethod
 import random
 
 from catan.board import IllegalMoveError
-from catan.player import Player, NotEnoughResourcesError
+from catan.player import Player, NotEnoughResourcesError, ResourceSet
 from catan.resources import Resource
 from hexagons.hexagons import VertexCoord, EdgeCoord
 from catan import game, board
@@ -50,6 +50,8 @@ class Move(ABC):
 
 
 class BuildSettlementMove(Move):
+    """Build a settlement in an empty vertex"""
+    
     cost = {
         Resource.WOOD: 1,
         Resource.WHEAT: 1,
@@ -83,6 +85,8 @@ class BuildSettlementMove(Move):
 
 
 class UpgradeSettlementMove(Move):
+    """Upgrade a settlement to become a city"""
+    
     cost = {
         Resource.WHEAT: 2,
         Resource.STONE: 3
@@ -117,6 +121,8 @@ class UpgradeSettlementMove(Move):
 
 
 class BuildRoadMove(Move):
+    """Build a road"""
+    
     cost = {
         Resource.WOOD: 1,
         Resource.MUD: 1,
@@ -147,7 +153,12 @@ class BuildRoadMove(Move):
 
 
 class ProposeTradeMove(Move):
-    def __init__(self, offering, wants):
+    """Propose a trade with another player"""
+
+    offering: ResourceSet
+    wants: ResourceSet
+    
+    def __init__(self, offering: ResourceSet, wants: ResourceSet):
         self.offering = offering
         self.wants = wants
 
@@ -173,6 +184,46 @@ class ProposeTradeMove(Move):
 
     def __str__(self):
         return f"[Trade {self.wants} for {self.offering}]"
+
+
+class ExchangeMove(Move):
+    """This move is used to exchange resources with the bank, as opposed to another player."""
+
+    offering: ResourceSet
+    wants: Resource
+
+    def __init__(self, offering: ResourceSet, wants: Resource):
+        self.offering = offering
+        self.wants = wants
+
+    def validate(self, ctx: MoveContext) -> MoveResult:
+        if len(self.offering) != 1:
+            return MoveResult(False, "Can't offer more than one type of resource")
+
+        if not ctx.player().hand.has_resources(self.offering):
+            return MoveResult(False, "Does not have offered resources")
+
+        (offering, offering_qty) = next(iter(self.offering.items()))
+
+        # TODO implement ports
+
+        if offering_qty != 4:
+            return MoveResult(False, 'Invalid Exchange')
+
+        return MoveResult(True, None)
+
+    def perform(self, ctx: MoveContext) -> MoveResult:
+        ctx.player().hand.take_resources(self.offering)
+        ctx.player().hand.add_resource(self.wants, 1)
+        return MoveResult(True, None)
+    
+    def __str__(self):
+        return f"[Exchange {self.wants} for {self.offering}]"
+
+
+
+
+
 
         
 
