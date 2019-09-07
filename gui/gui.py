@@ -80,8 +80,8 @@ class BoardFrame(Frame):
         y = self.tile_radius * (3.0 / 2 * coords.r) + self.tile_offset[1]
         return x, y
 
-    def vertice_pixel_coords(self, vertice: hexagons.VertexCoord):
-        return vertice.pos(self.hex_pixel_coords(vertice.tile), self.tile_radius)
+    def vertex_pixel_coords(self, vertex: hexagons.VertexCoord):
+        return vertex.pos(self.hex_pixel_coords(vertex.tile), self.tile_radius)
 
     def draw_hex(self, pos, color=None):
         self.draw_hex_raw(pos, self.tile_radius, color=color)
@@ -122,7 +122,7 @@ class BoardFrame(Frame):
             self.draw_road(road)
 
     def draw_settlement(self, settlement: board.Settlement):
-        coords = self.vertice_pixel_coords(settlement.coords)
+        coords = self.vertex_pixel_coords(settlement.coords)
 
         if settlement.is_city:
             rectangle_size = 15
@@ -145,8 +145,8 @@ class BoardFrame(Frame):
 
     def draw_road(self, road: board.Road):
         [v1, v2] = road.coords.vertices()
-        c1 = self.vertice_pixel_coords(v1)
-        c2 = self.vertice_pixel_coords(v2)
+        c1 = self.vertex_pixel_coords(v1)
+        c2 = self.vertex_pixel_coords(v2)
 
         self.canvas.create_line(
             c1[0],

@@ -20,7 +20,7 @@ def random_tile(coords) -> Tile:
     return Tile(coords, random_tile_type(), random_tile_number())
 
 
-def random_vertice(coords) -> hexagons.VertexCoord:
+def random_vertex(coords) -> hexagons.VertexCoord:
     tile = random.choice(coords)
     return hexagons.VertexCoord(tile, random.randint(0, 6)).normalize()
 
@@ -43,7 +43,7 @@ def new_board_started():
         for _ in range(2):
             while True:
                 try:
-                    settlement = Settlement(player, random_vertice(tiles))
+                    settlement = Settlement(player, random_vertex(tiles))
                     board.add_settlement(settlement, allow_free_placement=True)
                     break
                 except IllegalMoveError:

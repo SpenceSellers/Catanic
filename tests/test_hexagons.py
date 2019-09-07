@@ -12,7 +12,7 @@ class TestHexCoord:
         assert coord.through_side(side) == expected
 
 
-class TestVerticeCoord:
+class TestVertexCoord:
     def test_normalize_wraps_vertex_number(self):
         result = VertexCoord(HexCoord(0, 0), 6).normalize()
         assert result.vertex == 0
