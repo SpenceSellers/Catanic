@@ -22,8 +22,7 @@ class GameManager:
             (command, config) = self.command_queue.get()
             if command == 'start':
                 self.end()
-                current_game_thread = threading.Thread(target=lambda: game_thread(self.game_queue, self.game_control_queue), daemon=True)
-                current_game_thread.start()
+                self.start()
 
             elif command == 'end':
                 self.end()
@@ -31,9 +30,14 @@ class GameManager:
             elif command in ['play', 'pause', 'step']:
                 self.game_control_queue.put((command, config))
 
+    def start(self):
+        print('Starting game')
+        self.current_game_thread = threading.Thread(target=lambda: game_thread(self.game_queue, self.game_control_queue), daemon=True)
+        self.current_game_thread.start()
+
     def end(self):
-        logging.warning('Ending current game')
         if self.current_game_thread:
+            logging.warning('Ending current game')
             self.game_control_queue.put(('end', None))
             self.current_game_thread.join()
             self.current_game_thread = None
@@ -50,6 +54,8 @@ def game_thread(game_queue, game_control_queue):
     }
 
     the_game = game.Game(board, agents)
+
+    # Send the initial board state
     game_queue.put(the_game)
 
     ms_per_turn = 10
@@ -70,6 +76,8 @@ def game_thread(game_queue, game_control_queue):
                     paused = False
                 elif cmd == 'step':
                     is_stepping = True
+                elif cmd == 'end':
+                    return
             except queue.Empty:
                 pass
 
