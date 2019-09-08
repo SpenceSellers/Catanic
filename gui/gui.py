@@ -28,17 +28,26 @@ PLAYER_COLORS = {
 
 
 class App(Frame):
-    def __init__(self, queue: queue.Queue, master=None):
+    def __init__(self, game_queue: queue.Queue, command_queue: queue.Queue, master=None):
         super().__init__(master)
         self.master = master
-        self.queue = queue;
-        self.pack()
+        self.game_queue = game_queue
+        self.command_queue = command_queue;
+        self.pack(fill=BOTH, expand=True)
+
+        self.columnconfigure(1, weight=1)
+        self.columnconfigure(0, pad=10)
+        self.rowconfigure(0, pad=10)
+        self.rowconfigure(1, weight=1)
 
         self.board = BoardFrame(self)
-        self.board.pack(side='bottom')
+        self.board.grid(column=1, row=1)
+
+        self.control_panel = ControlPanel(self)
+        self.control_panel.grid(column=0, row=1)
 
         self.turn_counter = Label(self)
-        self.turn_counter.pack()
+        self.turn_counter.grid(column=1, row=0)
 
         self.update()
 
@@ -53,7 +62,7 @@ class App(Frame):
         game_to_draw = None
         try:
             while True:
-                game_to_draw = self.queue.get_nowait()
+                game_to_draw = self.game_queue.get_nowait()
 
         except queue.Empty:
             pass
@@ -64,6 +73,19 @@ class App(Frame):
             print('Drew game')
 
         self.after(100, self.update)
+
+
+class ControlPanel(Frame):
+    def __init__(self, master=None):
+        super().__init__(master)
+        self.master = master
+        # self.pack()
+
+        self.btn = Button(self, text='Start', command=self.start)
+        self.btn.pack(side='left')
+
+    def start(self):
+        print('Starting')
 
 
 class BoardFrame(Frame):
@@ -180,19 +202,8 @@ class BoardFrame(Frame):
         self.canvas.delete(ALL)
 
 
-# def queue_thread_func(q: queue.Queue, app: Frame):
-#     logging.info('Starting GUI queue thread')
-#     while True:
-#         logging.debug('Showing board state')
-#         game = q.get(True)
-#         print(game)
-#         app.clear()
-#
-#         app.draw_game(game)
-
-
-def start(q: queue.Queue):
+def start(game_queue: queue.Queue, command_queue: queue.Queue):
     root = Tk()
-    # root.geometry('1000x500')
-    app = App(q, master=root)
+    root.geometry('1800x1000')
+    app = App(game_queue, command_queue, master=root)
     app.mainloop()
