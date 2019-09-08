@@ -7,7 +7,7 @@ import time
 from catan import game
 import game_setup
 from gui import gui
-from agents.agents import RandomAgent
+from agents.agents import RandomAgent, InformedRandomAgent
 
 
 def gui_thread(q: queue.Queue):
@@ -26,7 +26,7 @@ def main():
     agents = {
         0: RandomAgent(),
         1: RandomAgent(),
-        2: RandomAgent(),
+        2: InformedRandomAgent(),
         3: RandomAgent()
     }
 

@@ -148,7 +148,6 @@ class EdgeCoord:
         return [self.tile, self.swap_side().tile]
 
 
-
 def hex_distance(coord_a: HexCoord, coord_b: HexCoord) -> int:
     a_q = coord_a[0]
     a_r = coord_a[1]
