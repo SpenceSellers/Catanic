@@ -10,21 +10,33 @@ from gui import gui
 from agents.agents import RandomAgent, InformedRandomAgent
 
 
-def game_manager_thread(game_queue, command_queue):
-    current_game_thread = None
-    game_control_queue = queue.Queue()
-    while True:
-        (command, config) = command_queue.get()
-        if command == 'start':
-            if current_game_thread:
-                logging.warning('Waiting for current game to finish before starting another')
-                current_game_thread.join()
+class GameManager:
+    def __init__(self, game_queue: queue.Queue, command_queue: queue.Queue):
+        self.game_queue = game_queue
+        self.command_queue = command_queue
+        self.current_game_thread = None
+        self.game_control_queue = queue.Queue()
 
-            current_game_thread = threading.Thread(target=lambda: game_thread(game_queue, game_control_queue), daemon=True)
-            current_game_thread.start()
+    def run_loop(self):
+        while True:
+            (command, config) = self.command_queue.get()
+            if command == 'start':
+                self.end()
+                current_game_thread = threading.Thread(target=lambda: game_thread(self.game_queue, self.game_control_queue), daemon=True)
+                current_game_thread.start()
 
-        elif command in ['play', 'pause', 'step']:
-            game_control_queue.put((command, config))
+            elif command == 'end':
+                self.end()
+
+            elif command in ['play', 'pause', 'step']:
+                self.game_control_queue.put((command, config))
+
+    def end(self):
+        logging.warning('Ending current game')
+        if self.current_game_thread:
+            self.game_control_queue.put(('end', None))
+            self.current_game_thread.join()
+            self.current_game_thread = None
 
 
 def game_thread(game_queue, game_control_queue):
@@ -59,7 +71,6 @@ def game_thread(game_queue, game_control_queue):
                 elif cmd == 'step':
                     is_stepping = True
             except queue.Empty:
-                print('Empty')
                 pass
 
             if not paused:
@@ -88,7 +99,7 @@ def main():
     game_queue = queue.Queue()
     command_queue = queue.Queue()
 
-    thread = threading.Thread(target=lambda: game_manager_thread(game_queue, command_queue), daemon=True)
+    thread = threading.Thread(target=lambda: GameManager(game_queue, command_queue).run_loop(), daemon=True)
     thread.start()
 
     gui.start(game_queue, command_queue)
