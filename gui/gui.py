@@ -6,6 +6,7 @@ from catan import game, player
 from catan.player import ResourceSet, Resource
 from gui.board import BoardFrame
 from gui.colors import PLAYER_COLORS
+from gui.event_message_builder import EventMessageBuilder
 
 
 class App(Frame):
@@ -113,6 +114,9 @@ class GameInfo(Frame):
         self.messages = Text(self, state=DISABLED)
         self.messages.grid(column=0, row=0, sticky=W+E+N+S)
 
+        for player_id, color in PLAYER_COLORS.items():
+            self.messages.tag_configure('player_' + str(player_id), foreground=color)
+
     def update_game(self, game: game.Game):
         num_players = len(game.players)
         if len(self.player_widgets) != num_players:
@@ -126,16 +130,13 @@ class GameInfo(Frame):
             widget = self.player_widgets[i]
             widget.update_player(game, game_player)
 
-    def log_message(self, msg: str):
-        # Tkinter text boxes cannot be written to when disabled, even programmatically
-        self.messages.config(state=NORMAL)
-        self.messages.insert(END, msg + '\n')
-        self.messages.config(state=DISABLED)
+    def build_message(self) -> EventMessageBuilder:
+        return EventMessageBuilder(self.messages)
 
     def show_event(self, event):
         print(event)
         if isinstance(event, game_events.RollEvent):
-            self.log_message(f'Player {event.player_id} rolled {event.roll}')
+            self.build_message().player(event.player_id).text(f' rolled {event.roll}').insert()
 
 
 class PlayerInfo(Frame):
