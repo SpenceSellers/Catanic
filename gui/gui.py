@@ -87,11 +87,29 @@ class ControlPanel(Frame):
         self.master = master
         self.command_queue = command_queue
 
-        self.btn = Button(self, text='Start', command=self.start)
-        self.btn.pack(side='left')
+        self.start = Button(self, text='Start', command=self.start)
+        self.start.pack()
+
+        self.play = Button(self, text='Play', command=self.play)
+        self.play.pack()
+
+        self.pause = Button(self, text='Pause', command=self.pause)
+        self.pause.pack()
+
+        self.step = Button(self, text='Step', command=self.step)
+        self.step.pack()
 
     def start(self):
         self.command_queue.put(('start', None))
+
+    def play(self):
+        self.command_queue.put(('play', None))
+
+    def pause(self):
+        self.command_queue.put(('pause', None))
+
+    def step(self):
+        self.command_queue.put(('step', None))
 
 
 class GameInfo(Frame):
