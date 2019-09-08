@@ -218,7 +218,7 @@ class ExchangeMove(Move):
         return MoveResult(True, None)
     
     def __str__(self):
-        return f"[Exchange {self.wants} for {self.offering}]"
+        return f"[Exchange {self.offering} for {self.wants}]"
 
 
 

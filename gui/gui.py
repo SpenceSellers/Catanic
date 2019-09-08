@@ -134,9 +134,10 @@ class GameInfo(Frame):
         return EventMessageBuilder(self.messages)
 
     def show_event(self, event):
-        print(event)
         if isinstance(event, game_events.RollEvent):
             self.build_message().player(event.player_id).text(f' rolled {event.roll}').insert()
+        elif isinstance(event, game_events.PlayedMoveEvent):
+            self.build_message().player(event.player_id).text(f' {event.move}').insert()
 
 
 class PlayerInfo(Frame):
