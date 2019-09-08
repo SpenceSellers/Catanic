@@ -43,7 +43,7 @@ class App(Frame):
         self.board = BoardFrame(self)
         self.board.grid(column=1, row=1)
 
-        self.control_panel = ControlPanel(self)
+        self.control_panel = ControlPanel(self.command_queue, self)
         self.control_panel.grid(column=0, row=1)
 
         self.turn_counter = Label(self)
@@ -61,7 +61,9 @@ class App(Frame):
     def update(self):
         game_to_draw = None
         try:
+            # We've likely missed multiple queue updates
             while True:
+                # We might be getting a lot of games to draw during this update, let's only draw it once.
                 game_to_draw = self.game_queue.get_nowait()
 
         except queue.Empty:
@@ -70,29 +72,27 @@ class App(Frame):
         if game_to_draw:
             self.clear()
             self.draw_game(game_to_draw)
-            print('Drew game')
 
         self.after(100, self.update)
 
 
 class ControlPanel(Frame):
-    def __init__(self, master=None):
+    def __init__(self, command_queue: queue.Queue, master=None):
         super().__init__(master)
         self.master = master
-        # self.pack()
+        self.command_queue = command_queue
 
         self.btn = Button(self, text='Start', command=self.start)
         self.btn.pack(side='left')
 
     def start(self):
-        print('Starting')
+        self.command_queue.put(('start', None))
 
 
 class BoardFrame(Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
-        self.pack()
 
         self.canvas = Canvas(self, width=900, height=800)
         self.canvas.configure(background='white')

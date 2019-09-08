@@ -10,6 +10,17 @@ from gui import gui
 from agents.agents import RandomAgent, InformedRandomAgent
 
 
+def game_manager_thread(game_queue, command_queue):
+    print('Running game manager')
+    while True:
+        (command, config) = command_queue.get()
+        print('Got command', command)
+        if command == 'start':
+            thread = threading.Thread(target=lambda: game_thread(game_queue), daemon=True)
+            thread.start()
+            thread.join()
+
+
 def game_thread(game_queue):
     board = game_setup.new_board_started()
 
@@ -30,7 +41,7 @@ def game_thread(game_queue):
 
         if not ongoing:
             game_queue.put(the_game)
-            time.sleep(10000)
+            return
 
 
 def main():
@@ -38,7 +49,7 @@ def main():
     game_queue = queue.Queue()
     command_queue = queue.Queue()
 
-    thread = threading.Thread(target=lambda: game_thread(game_queue), daemon=True)
+    thread = threading.Thread(target=lambda: game_manager_thread(game_queue, command_queue), daemon=True)
     thread.start()
 
     gui.start(game_queue, command_queue)
