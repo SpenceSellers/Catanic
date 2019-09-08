@@ -6,6 +6,7 @@ import time
 
 from catan import game
 import game_setup
+from game_events import GameUpdateEvent
 from gui import gui
 from agents.agents import RandomAgent, InformedRandomAgent
 
@@ -56,7 +57,7 @@ def game_thread(game_queue, game_control_queue):
     the_game = game.Game(board, agents)
 
     # Send the initial board state
-    game_queue.put(the_game)
+    game_queue.put(GameUpdateEvent(the_game))
 
     ms_per_turn = 10
     paused = True
@@ -89,7 +90,7 @@ def game_thread(game_queue, game_control_queue):
                 break
 
         ongoing = the_game.tick(agents)
-        game_queue.put(the_game)
+        game_queue.put(GameUpdateEvent(the_game))
 
         if not ongoing:
             # Someone won!

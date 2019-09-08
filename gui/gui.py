@@ -4,6 +4,7 @@ from tkinter import *
 import threading
 import logging
 
+import game_events
 from catan import board, game, player
 from catan.player import ResourceSet, Resource
 
@@ -69,7 +70,9 @@ class App(Frame):
             # We've likely missed multiple queue updates
             while True:
                 # We might be getting a lot of games to draw during this update, let's only draw it once.
-                game_to_draw = self.game_queue.get_nowait()
+                event = self.game_queue.get_nowait()
+                if isinstance(event, game_events.GameUpdateEvent):
+                    game_to_draw = event.game
 
         except queue.Empty:
             pass

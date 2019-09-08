@@ -1,10 +1,12 @@
 import logging
+import queue
 import random
-from typing import Dict
+from typing import Dict, Any
 
 from catan import board, player, moves
 from agents import agents
 from agents.agents import Agent
+from game_events import RollEvent, PlayedMoveEvent
 from hexagons.hexagons import HexCoord
 from catan.resources import Resource
 
@@ -12,9 +14,10 @@ WINNING_VICTORY_POINTS = 10
 
 
 class Game:
-    def __init__(self, board: board.Board, agents: Dict[int, Agent]):
+    def __init__(self, board: board.Board, agents: Dict[int, Agent], game_event_queue: queue.Queue = None):
         self.board = board
         self.agents = agents
+        self.game_event_queue = game_event_queue
         self.players = {}
         self.num_players = len(agents)
         self.turn_number = 0
@@ -26,6 +29,10 @@ class Game:
 
         for (id, agent) in agents.items():
             agent.join_game(self, id)
+
+    def event(self, event: Any):
+        if self.game_event_queue:
+            self.game_event_queue.put(event)
 
     def give_player_resource(self, player_id: int, resource: Resource, quantity: int = 1):
         self.players[player_id].hand.add_resource(resource, quantity)
@@ -44,8 +51,10 @@ class Game:
                 settlement = self.board.settlements[vertex]
                 self.give_player_resource(settlement.owner, resource, 2 if settlement.is_city else 1)
 
-    def rolled(self, roll: int):
+    def rolled(self, player_id: int, roll: int):
         logging.info(f'Number was rolled: {roll}')
+        self.event(RollEvent(player_id, roll))
+
         if roll == 7:
             self.roll_seven()
         else:
@@ -73,11 +82,10 @@ class Game:
     def tick(self, player_agents: Dict[int, Agent]) -> bool:
         """Performs one turn of the game"""
         roll = random.randint(1, 7) + random.randint(1, 7)
-        self.rolled(roll)
+        self.rolled(self.next_to_play, roll)
 
         move_generator = player_agents[self.next_to_play].play_turn()
         logging.info(f"PLAYER {self.next_to_play} BEGIN TURN NUMBER {self.turn_number}")
-        logging.info(f"Player has {self.players[self.next_to_play].hand.resources}")
 
         # Advance to the first yield point
         move = next(move_generator)
@@ -89,6 +97,7 @@ class Game:
                 if not result_of_move.successful:
                     logging.info(f"Player {self.next_to_play}'s move failed because {result_of_move.results}")
                 else:
+                    self.event(PlayedMoveEvent(self.next_to_play, move))
                     logging.info(f"The move was successful")
 
                 move = move_generator.send(result_of_move)
