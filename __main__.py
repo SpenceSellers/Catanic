@@ -34,7 +34,7 @@ def main():
     q.put(the_game)
     for i in itertools.count():
         ongoing = the_game.tick(agents)
-        if i % 200 == 0:
+        if i % 20 == 0:
             q.put(the_game)
             time.sleep(0.1)
 

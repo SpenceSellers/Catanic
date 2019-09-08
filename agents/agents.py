@@ -59,7 +59,7 @@ class InformedRandomAgent(Agent):
     def play_turn(self) -> Generator[Move, MoveResult, None]:
         if self.player.hand.has_resources(BuildSettlementMove.cost):
             buildable_settlements = agent_utils.vertices_where_settlement_can_be_built(self.game.board, self.player_id)
-            if len(buildable_settlements):
+            if buildable_settlements:
                 yield BuildSettlementMove(
                     random.choice(list(buildable_settlements))
                 )
@@ -71,7 +71,7 @@ class InformedRandomAgent(Agent):
                    and not settlement.is_city
             ]
 
-            if len(upgradable_settlements):
+            if upgradable_settlements:
                 yield UpgradeSettlementMove(random.choice(upgradable_settlements))
 
         if self.player.hand.has_resources(BuildRoadMove.cost):
