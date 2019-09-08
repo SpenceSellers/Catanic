@@ -26,7 +26,7 @@ def game_thread(game_queue):
         0: RandomAgent(),
         1: RandomAgent(),
         2: InformedRandomAgent(),
-        3: RandomAgent(),
+        3: InformedRandomAgent(),
     }
 
     the_game = game.Game(board, agents)

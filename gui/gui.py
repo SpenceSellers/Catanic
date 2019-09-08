@@ -78,7 +78,7 @@ class App(Frame):
             self.clear()
             self.draw_game(game_to_draw)
 
-        self.after(100, self.update)
+        self.after(50, self.update)
 
 
 class ControlPanel(Frame):
@@ -120,7 +120,7 @@ class PlayerInfo(Frame):
             master,
             bd=2,
             relief=SUNKEN,
-            pady=5
+            pady=5,
         )
         self.master = master
 
