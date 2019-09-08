@@ -74,9 +74,10 @@ class InformedRandomAgent(Agent):
             if len(upgradable_settlements):
                 yield UpgradeSettlementMove(random.choice(upgradable_settlements))
 
-        rand_tile: HexCoord = random.choice(list(self.game.board.tiles.keys()))
-        rand_edge: EdgeCoord = random.choice(list(rand_tile.edges()))
-        yield BuildRoadMove(rand_edge)
+        if self.player.hand.has_resources(BuildRoadMove.cost):
+            buildable_roads = agent_utils.edges_where_road_can_be_built(self.game.board, self.player_id)
+            if buildable_roads:
+                yield BuildRoadMove(random.choice(list(buildable_roads)))
 
         rand_resource_want = random.choice(list(Resource))
         rand_resource_offering = random.choice(list(Resource))
