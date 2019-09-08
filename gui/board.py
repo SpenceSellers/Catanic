@@ -1,5 +1,5 @@
 import math
-from tkinter import Frame, Canvas, Button, ALL
+from tkinter import Frame, Canvas, Button, ALL, SUNKEN
 
 from catan import board
 from gui.colors import TILE_COLORS, PLAYER_COLORS
@@ -8,7 +8,11 @@ from hexagons import hexagons
 
 class BoardFrame(Frame):
     def __init__(self, master=None):
-        super().__init__(master)
+        super().__init__(
+            master,
+            bd=2,
+            relief=SUNKEN,
+        )
         self.master = master
 
         self.canvas = Canvas(self, width=900, height=800)

@@ -13,25 +13,27 @@ class App(Frame):
         super().__init__(master)
         self.master = master
         self.game_queue = game_queue
-        self.command_queue = command_queue;
+        self.command_queue = command_queue
         self.pack(fill=BOTH, expand=True)
 
+        self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
-        self.columnconfigure(0, pad=10)
-        self.rowconfigure(0, pad=10)
+        self.columnconfigure(2, weight=1)
+        self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)
+        self.rowconfigure(2, weight=1)
 
         self.board = BoardFrame(self)
-        self.board.grid(column=1, row=1)
+        self.board.grid(column=1, row=1, sticky=W+E+N+S)
 
         self.control_panel = ControlPanel(self.command_queue, self)
-        self.control_panel.grid(column=0, row=1)
+        self.control_panel.grid(column=0, row=1, sticky=W+E+N+S)
 
         self.turn_counter = Label(self)
         self.turn_counter.grid(column=1, row=0)
 
         self.game_info = GameInfo(self)
-        self.game_info.grid(column=2, row=1)
+        self.game_info.grid(column=2, row=1, sticky=W+E+N+S)
 
         self.update()
 
@@ -70,16 +72,16 @@ class ControlPanel(Frame):
         self.command_queue = command_queue
 
         self.start = Button(self, text='Start', command=self.start)
-        self.start.pack()
+        self.start.pack(fill=X)
 
         self.play = Button(self, text='Play', command=self.play)
-        self.play.pack()
+        self.play.pack(fill=X)
 
         self.pause = Button(self, text='Pause', command=self.pause)
-        self.pause.pack()
+        self.pause.pack(fill=X)
 
         self.step = Button(self, text='Step', command=self.step)
-        self.step.pack()
+        self.step.pack(fill=X)
 
     def start(self):
         self.command_queue.put(('start', None))
@@ -105,7 +107,7 @@ class GameInfo(Frame):
         if len(self.player_widgets) != num_players:
             for i in range(num_players):
                 player = PlayerInfo(self)
-                player.pack()
+                player.pack(fill=X)
                 self.player_widgets.append(player)
 
         for i in range(num_players):
