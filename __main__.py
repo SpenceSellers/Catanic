@@ -10,17 +10,7 @@ from gui import gui
 from agents.agents import RandomAgent, InformedRandomAgent
 
 
-def gui_thread(q: queue.Queue):
-    gui.start(q)
-
-
-def main():
-    logging.basicConfig(level=logging.DEBUG)
-    q = queue.Queue()
-
-    thread = threading.Thread(target=lambda: gui_thread(q), daemon=True)
-    thread.start()
-
+def game_thread(q):
     board = game_setup.new_board_started()
 
     agents = {
@@ -34,13 +24,23 @@ def main():
     q.put(the_game)
     for i in itertools.count():
         ongoing = the_game.tick(agents)
-        if i % 20 == 0:
-            q.put(the_game)
+        q.put(the_game)
+        if i % 10 == 0:
             time.sleep(0.1)
 
         if not ongoing:
             q.put(the_game)
             time.sleep(10000)
+
+
+def main():
+    logging.basicConfig(level=logging.DEBUG)
+    q = queue.Queue()
+
+    thread = threading.Thread(target=lambda: game_thread(q), daemon=True)
+    thread.start()
+
+    gui.start(q)
 
 
 if __name__ == '__main__':

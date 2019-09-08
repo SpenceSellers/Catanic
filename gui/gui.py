@@ -28,9 +28,10 @@ PLAYER_COLORS = {
 
 
 class App(Frame):
-    def __init__(self, master=None):
+    def __init__(self, queue: queue.Queue, master=None):
         super().__init__(master)
         self.master = master
+        self.queue = queue;
         self.pack()
 
         self.board = BoardFrame(self)
@@ -39,12 +40,30 @@ class App(Frame):
         self.turn_counter = Label(self)
         self.turn_counter.pack()
 
+        self.update()
+
     def draw_game(self, game: game.Game):
         self.board.draw_board(game.board)
         self.turn_counter.configure(text=str(game.turn_number))
 
     def clear(self):
         self.board.clear()
+
+    def update(self):
+        game_to_draw = None
+        try:
+            while True:
+                game_to_draw = self.queue.get_nowait()
+
+        except queue.Empty:
+            pass
+
+        if game_to_draw:
+            self.clear()
+            self.draw_game(game_to_draw)
+            print('Drew game')
+
+        self.after(100, self.update)
 
 
 class BoardFrame(Frame):
@@ -161,21 +180,19 @@ class BoardFrame(Frame):
         self.canvas.delete(ALL)
 
 
-def queue_thread_func(q: queue.Queue, app: Frame):
-    logging.info('Starting GUI queue thread')
-    while True:
-        logging.debug('Showing board state')
-        game = q.get(True)
-        print(game)
-        app.clear()
-
-        app.draw_game(game)
+# def queue_thread_func(q: queue.Queue, app: Frame):
+#     logging.info('Starting GUI queue thread')
+#     while True:
+#         logging.debug('Showing board state')
+#         game = q.get(True)
+#         print(game)
+#         app.clear()
+#
+#         app.draw_game(game)
 
 
 def start(q: queue.Queue):
     root = Tk()
     # root.geometry('1000x500')
-    app = App(master=root)
-    queue_thread = threading.Thread(target=lambda: queue_thread_func(q, app), daemon=True)
-    queue_thread.start()
+    app = App(q, master=root)
     app.mainloop()
