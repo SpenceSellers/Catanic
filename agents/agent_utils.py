@@ -15,3 +15,7 @@ def all_vertices(board: Board) -> Set[VertexCoord]:
 def vertices_where_settlement_can_be_built(board: Board, player_id: int) -> Set[VertexCoord]:
     return set(vertex for vertex in all_vertices(board) if board.can_build_settlement(Settlement(player_id, vertex)))
 
+
+def edges_where_road_can_be_built(board: Board, player_id: int):
+    pass
+

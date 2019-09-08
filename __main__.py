@@ -27,7 +27,7 @@ def main():
         0: RandomAgent(),
         1: RandomAgent(),
         2: InformedRandomAgent(),
-        3: RandomAgent()
+        3: RandomAgent(),
     }
 
     the_game = game.Game(board, agents)
@@ -39,6 +39,7 @@ def main():
             time.sleep(0.1)
 
         if not ongoing:
+            q.put(the_game)
             time.sleep(10000)
 
 

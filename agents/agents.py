@@ -57,20 +57,22 @@ class RandomAgent(Agent):
 
 class InformedRandomAgent(Agent):
     def play_turn(self) -> Generator[Move, MoveResult, None]:
-        buildable_settlements = agent_utils.vertices_where_settlement_can_be_built(self.game.board, self.player_id)
-        if len(buildable_settlements):
-            yield BuildSettlementMove(
-                random.choice(list(buildable_settlements))
-            )
+        if self.player.hand.has_resources(BuildSettlementMove.cost):
+            buildable_settlements = agent_utils.vertices_where_settlement_can_be_built(self.game.board, self.player_id)
+            if len(buildable_settlements):
+                yield BuildSettlementMove(
+                    random.choice(list(buildable_settlements))
+                )
 
-        upgradable_settlements = [
-            settlement.coords for settlement in self.game.board.settlements.values()
-            if settlement.owner == self.player_id
-               and not settlement.is_city
-        ]
+        if self.player.hand.has_resources(UpgradeSettlementMove.cost):
+            upgradable_settlements = [
+                settlement.coords for settlement in self.game.board.settlements.values()
+                if settlement.owner == self.player_id
+                   and not settlement.is_city
+            ]
 
-        if len(upgradable_settlements):
-            yield UpgradeSettlementMove(random.choice(upgradable_settlements))
+            if len(upgradable_settlements):
+                yield UpgradeSettlementMove(random.choice(upgradable_settlements))
 
         rand_tile: HexCoord = random.choice(list(self.game.board.tiles.keys()))
         rand_edge: EdgeCoord = random.choice(list(rand_tile.edges()))

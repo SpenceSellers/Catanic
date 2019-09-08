@@ -98,7 +98,7 @@ class Game:
         victory_points = self.get_victory_points(self.next_to_play)
         logging.info(f"PLAYER {self.next_to_play} END TURN with {victory_points} points")
         if victory_points >= WINNING_VICTORY_POINTS:
-            logging.info(f'PLAYER {self.next_to_play} WON')
+            logging.info(f'PLAYER {self.next_to_play} WON (agent {self.agents[self.next_to_play]})')
             return False
 
         # Advance to next player's turn
