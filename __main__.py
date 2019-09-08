@@ -16,7 +16,7 @@ class GameManager:
         self.game_queue = game_queue
         self.command_queue = command_queue
         self.current_game_thread = None
-        self.game_control_queue = queue.Queue()
+        self.game_control_queue = None
 
     def run_loop(self):
         while True:
@@ -29,11 +29,19 @@ class GameManager:
                 self.end()
 
             elif command in ['play', 'pause', 'step']:
-                self.game_control_queue.put((command, config))
+                if self.current_game_thread:
+                    self.game_control_queue.put((command, config))
 
     def start(self):
-        print('Starting game')
-        self.current_game_thread = threading.Thread(target=lambda: game_thread(self.game_queue, self.game_control_queue), daemon=True)
+        if self.current_game_thread:
+            logging.ERROR('Starting a game, but the current game has not ended')
+
+        logging.info('Starting game')
+        self.game_control_queue = queue.Queue()
+        self.current_game_thread = threading.Thread(
+            target=lambda: game_thread(self.game_queue, self.game_control_queue),
+            daemon=True
+        )
         self.current_game_thread.start()
 
     def end(self):
