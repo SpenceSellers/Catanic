@@ -14,10 +14,10 @@ WINNING_VICTORY_POINTS = 10
 
 
 class Game:
-    def __init__(self, board: board.Board, agents: Dict[int, Agent], game_event_queue: queue.Queue = None):
+    def __init__(self, board: board.Board, agents: Dict[int, Agent], game_event_callback = None):
         self.board = board
         self.agents = agents
-        self.game_event_queue = game_event_queue
+        self.game_event_callback = game_event_callback
         self.players = {}
         self.num_players = len(agents)
         self.turn_number = 0
@@ -31,8 +31,8 @@ class Game:
             agent.join_game(self, id)
 
     def event(self, event: Any):
-        if self.game_event_queue:
-            self.game_event_queue.put(event)
+        if self.game_event_callback:
+            self.game_event_callback(event)
 
     def give_player_resource(self, player_id: int, resource: Resource, quantity: int = 1):
         self.players[player_id].hand.add_resource(resource, quantity)

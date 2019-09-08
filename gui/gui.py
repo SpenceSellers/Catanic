@@ -55,6 +55,8 @@ class App(Frame):
                 if isinstance(event, game_events.GameUpdateEvent):
                     game_to_draw = event.game
 
+                self.game_info.show_event(event)
+
         except queue.Empty:
             pass
 
@@ -102,11 +104,20 @@ class GameInfo(Frame):
         self.master = master
         self.player_widgets = []
 
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
+
+        self.players_frame = Frame(self)
+        self.players_frame.grid(column=1, row=0, sticky=W+E+N+S)
+
+        self.messages = Message(self)
+        self.messages.grid(column=0, row=0, sticky=W+E+N+S)
+
     def update_game(self, game: game.Game):
         num_players = len(game.players)
         if len(self.player_widgets) != num_players:
             for i in range(num_players):
-                player = PlayerInfo(self)
+                player = PlayerInfo(self.players_frame)
                 player.pack(fill=X)
                 self.player_widgets.append(player)
 
@@ -114,6 +125,12 @@ class GameInfo(Frame):
             game_player = game.players[i]
             widget = self.player_widgets[i]
             widget.update_player(game, game_player)
+
+    def show_event(self, event):
+        print(event)
+        if isinstance(event, game_events.RollEvent):
+            print('Showing roll')
+            self.messages.configure(text=str(event.roll))
 
 
 class PlayerInfo(Frame):

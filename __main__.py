@@ -62,7 +62,7 @@ def game_thread(game_queue, game_control_queue):
         3: InformedRandomAgent(),
     }
 
-    the_game = game.Game(board, agents)
+    the_game = game.Game(board, agents, lambda event: game_queue.put(event))
 
     # Send the initial board state
     game_queue.put(GameUpdateEvent(the_game))
