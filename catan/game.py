@@ -81,7 +81,7 @@ class Game:
 
     def tick(self, player_agents: Dict[int, Agent]) -> bool:
         """Performs one turn of the game"""
-        roll = random.randint(1, 7) + random.randint(1, 7)
+        roll = random.randint(1, 6) + random.randint(1, 6)
         self.rolled(self.next_to_play, roll)
 
         move_generator = player_agents[self.next_to_play].play_turn()

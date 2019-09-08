@@ -17,7 +17,12 @@ def random_tile_number() -> int:
 
 
 def random_tile(coords) -> Tile:
-    return Tile(coords, random_tile_type(), random_tile_number())
+    tile_type = random_tile_type()
+    if tile_type == TileType.DESERT:
+        # Desert tiles don't have a roll number
+        return Tile(coords, tile_type, None)
+    else:
+        return Tile(coords, tile_type, random_tile_number())
 
 
 def random_vertex(coords) -> hexagons.VertexCoord:

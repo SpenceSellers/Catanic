@@ -57,18 +57,19 @@ class BoardFrame(Frame):
             center_pos,
             color=color)
 
-        num_circle_radius = 15
+        if tile.number:
+            num_circle_radius = 15
 
-        self.canvas.create_oval(
-            center_pos[0] - num_circle_radius,
-            center_pos[1] - num_circle_radius,
-            center_pos[0] + num_circle_radius,
-            center_pos[1] + num_circle_radius,
-            fill='white',
-            outline='gray'
-        )
+            self.canvas.create_oval(
+                center_pos[0] - num_circle_radius,
+                center_pos[1] - num_circle_radius,
+                center_pos[0] + num_circle_radius,
+                center_pos[1] + num_circle_radius,
+                fill='white',
+                outline='gray'
+            )
 
-        self.canvas.create_text(center_pos[0], center_pos[1], text=str(tile.number))
+            self.canvas.create_text(center_pos[0], center_pos[1], text=str(tile.number))
 
         if self.debug:
             self.canvas.create_text(center_pos[0], center_pos[1] + 25, text=f'{tile.coords.q}, {tile.coords.r}')
@@ -77,11 +78,11 @@ class BoardFrame(Frame):
         for tile in board.tiles.values():
             self.draw_tile(tile)
 
-        for settlement in board.settlements.values():
-            self.draw_settlement(settlement)
-
         for road in board.roads.values():
             self.draw_road(road)
+
+        for settlement in board.settlements.values():
+            self.draw_settlement(settlement)
 
     def draw_settlement(self, settlement: board.Settlement):
         coords = self.vertex_pixel_coords(settlement.coords)
