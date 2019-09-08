@@ -5,6 +5,7 @@ import threading
 import logging
 
 from catan import board, game, player
+from catan.player import ResourceSet, Resource
 
 from hexagons import hexagons
 
@@ -129,11 +130,57 @@ class PlayerInfo(Frame):
         self.victory_points = Label(self)
         self.victory_points.pack()
 
+        self.resources = ResourcesDisplay(self)
+        self.resources.pack()
+
     def update_player(self, game: game.Game, player: player.Player):
         self.name.configure(text=f'Player {player.id}', fg=PLAYER_COLORS[player.id])
 
         vps = game.get_victory_points(player.id)
         self.victory_points.config(text=f'VPs: {vps}')
+
+        self.resources.show(player.hand.resources)
+
+
+class ResourcesDisplay(Frame):
+    def __init__(self, master=None):
+        super().__init__(master)
+        self.sheep_label = Label(self, text='Sheep')
+        self.sheep_label.grid(column=0, row=0)
+
+        self.stone_label = Label(self, text='Stone')
+        self.stone_label.grid(column=0, row=1)
+
+        self.wheat_label = Label(self, text='Wheat')
+        self.wheat_label.grid(column=0, row=2)
+
+        self.mud_label = Label(self, text='Mud')
+        self.mud_label.grid(column=0, row=3)
+
+        self.wood_label = Label(self, text='Wood')
+        self.wood_label.grid(column=0, row=4)
+
+        self.sheep = Label(self)
+        self.sheep.grid(column=1, row=0)
+
+        self.stone = Label(self)
+        self.stone.grid(column=1, row=1)
+
+        self.wheat = Label(self)
+        self.wheat.grid(column=1, row=2)
+
+        self.mud = Label(self)
+        self.mud.grid(column=1, row=3)
+
+        self.wood = Label(self)
+        self.wood.grid(column=1, row=4)
+
+    def show(self, resources: ResourceSet):
+        self.sheep.config(text=str(resources.get(Resource.SHEEP, 0)))
+        self.wheat.config(text=str(resources.get(Resource.WHEAT, 0)))
+        self.stone.config(text=str(resources.get(Resource.STONE, 0)))
+        self.mud.config(text=str(resources.get(Resource.MUD, 0)))
+        self.wood.config(text=str(resources.get(Resource.WOOD, 0)))
 
 
 class BoardFrame(Frame):
