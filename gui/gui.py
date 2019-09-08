@@ -110,7 +110,7 @@ class GameInfo(Frame):
         self.players_frame = Frame(self)
         self.players_frame.grid(column=1, row=0, sticky=W+E+N+S)
 
-        self.messages = Message(self)
+        self.messages = Text(self, state=DISABLED)
         self.messages.grid(column=0, row=0, sticky=W+E+N+S)
 
     def update_game(self, game: game.Game):
@@ -126,11 +126,16 @@ class GameInfo(Frame):
             widget = self.player_widgets[i]
             widget.update_player(game, game_player)
 
+    def log_message(self, msg: str):
+        # Tkinter text boxes cannot be written to when disabled, even programmatically
+        self.messages.config(state=NORMAL)
+        self.messages.insert(END, msg + '\n')
+        self.messages.config(state=DISABLED)
+
     def show_event(self, event):
         print(event)
         if isinstance(event, game_events.RollEvent):
-            print('Showing roll')
-            self.messages.configure(text=str(event.roll))
+            self.log_message(f'Player {event.player_id} rolled {event.roll}')
 
 
 class PlayerInfo(Frame):
