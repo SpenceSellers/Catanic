@@ -11,10 +11,8 @@ from agents.agents import RandomAgent, InformedRandomAgent
 
 
 def game_manager_thread(game_queue, command_queue):
-    print('Running game manager')
     while True:
         (command, config) = command_queue.get()
-        print('Got command', command)
         if command == 'start':
             thread = threading.Thread(target=lambda: game_thread(game_queue), daemon=True)
             thread.start()

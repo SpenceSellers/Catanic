@@ -4,7 +4,7 @@ from tkinter import *
 import threading
 import logging
 
-from catan import board, game
+from catan import board, game, player
 
 from hexagons import hexagons
 
@@ -49,10 +49,14 @@ class App(Frame):
         self.turn_counter = Label(self)
         self.turn_counter.grid(column=1, row=0)
 
+        self.game_info = GameInfo(self)
+        self.game_info.grid(column=2, row=1)
+
         self.update()
 
     def draw_game(self, game: game.Game):
         self.board.draw_board(game.board)
+        self.game_info.update_game(game)
         self.turn_counter.configure(text=str(game.turn_number))
 
     def clear(self):
@@ -87,6 +91,49 @@ class ControlPanel(Frame):
 
     def start(self):
         self.command_queue.put(('start', None))
+
+
+class GameInfo(Frame):
+    def __init__(self, master=None):
+        super().__init__(master)
+        self.master = master
+        self.player_widgets = []
+
+    def update_game(self, game: game.Game):
+        num_players = len(game.players)
+        if len(self.player_widgets) != num_players:
+            for i in range(num_players):
+                player = PlayerInfo(self)
+                player.pack()
+                self.player_widgets.append(player)
+
+        for i in range(num_players):
+            game_player = game.players[i]
+            widget = self.player_widgets[i]
+            widget.update_player(game, game_player)
+
+
+class PlayerInfo(Frame):
+    def __init__(self, master=None):
+        super().__init__(
+            master,
+            bd=2,
+            relief=SUNKEN,
+            pady=5
+        )
+        self.master = master
+
+        self.name = Label(self, text='Player')
+        self.name.pack()
+
+        self.victory_points = Label(self)
+        self.victory_points.pack()
+
+    def update_player(self, game: game.Game, player: player.Player):
+        self.name.configure(text=f'Player {player.id}', fg=PLAYER_COLORS[player.id])
+
+        vps = game.get_victory_points(player.id)
+        self.victory_points.config(text=f'VPs: {vps}')
 
 
 class BoardFrame(Frame):
